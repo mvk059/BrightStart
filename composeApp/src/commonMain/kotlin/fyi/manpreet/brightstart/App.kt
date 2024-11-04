@@ -14,7 +14,9 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 import brightstart.composeapp.generated.resources.Res
+import brightstart.composeapp.generated.resources.alarm_empty
 import brightstart.composeapp.generated.resources.compose_multiplatform
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 @Preview
@@ -23,7 +25,7 @@ fun App() {
         var showContent by remember { mutableStateOf(false) }
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
+                Text(stringResource(Res.string.alarm_empty))
             }
             AnimatedVisibility(showContent) {
                 val greeting = remember { Greeting().greet() }

@@ -7,6 +7,7 @@ android-targetSdk = "34"
 compose-multiplatform = "1.7.0"
 compose = "1.7.5"
 composeAdaptiveLayout = "1.0.0"
+coreSplashscreen = "1.0.1"
 kotlin = "2.0.21"
 kermit = "2.0.4"
 multiplatformSettings = "1.2.0"
@@ -89,6 +90,7 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 multiplatformSettings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
