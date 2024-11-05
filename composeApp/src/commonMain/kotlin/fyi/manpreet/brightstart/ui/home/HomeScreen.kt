@@ -1,4 +1,4 @@
-package fyi.manpreet.brightstart
+package fyi.manpreet.brightstart.ui.home
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -11,8 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import fyi.manpreet.brightstart.ui.home.HomeEvent
-import fyi.manpreet.brightstart.ui.home.HomeViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

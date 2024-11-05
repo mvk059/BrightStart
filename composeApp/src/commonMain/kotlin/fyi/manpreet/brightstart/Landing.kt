@@ -8,6 +8,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import fyi.manpreet.brightstart.navigation.AddAlarmDestination
 import fyi.manpreet.brightstart.navigation.HomeDestination
+import fyi.manpreet.brightstart.ui.addalarm.AddAlarm
+import fyi.manpreet.brightstart.ui.home.HomeScreen
 
 @Composable
 fun Landing(

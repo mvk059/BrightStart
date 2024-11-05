@@ -1,4 +1,4 @@
-package fyi.manpreet.brightstart
+package fyi.manpreet.brightstart.ui.addalarm
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

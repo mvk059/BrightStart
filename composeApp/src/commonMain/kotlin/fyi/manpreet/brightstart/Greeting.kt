@@ -1,9 +1,0 @@
-package fyi.manpreet.brightstart
-
-class Greeting {
-    private val platform = getPlatform()
-
-    fun greet(): String {
-        return "Hello, ${platform.name}!"
-    }
-}
