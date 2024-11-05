@@ -7,30 +7,32 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import fyi.manpreet.brightstart.ui.components.button.CheckIcon
+import fyi.manpreet.brightstart.ui.components.button.CloseIcon
+import fyi.manpreet.brightstart.ui.components.button.RoundButton
+import fyi.manpreet.brightstart.ui.components.sound.Sound
+import fyi.manpreet.brightstart.ui.components.vibrate.Vibrate
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /**
  *
  * Time Picker: Takes 70% of the screen
- * Sound, Volume, Vibrate, Repeat, Name, Time left for alarm
- * Close and Save button at bottom left and right respectively
- * Handle status bar and navigation bar background colors
+ * TODO Sound, Volume, Vibrate, Repeat, Name, Time left for alarm
+ * TODO Close and Save button at bottom left and right respectively
+ * TODO Handle status bar and navigation bar background colors
+ * TODO Set fonts
+ * TODO Setup theme
  */
 @Composable
 fun AddAlarm(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
@@ -42,7 +44,6 @@ fun AddAlarm(
             modifier = Modifier
                 .weight(weight = 0.7f)
                 .fillMaxWidth()
-                .background(color = Color.Red)
         ) {
 
         }
@@ -51,7 +52,6 @@ fun AddAlarm(
             modifier = Modifier
                 .weight(0.3f)
                 .fillMaxWidth()
-                .background(color = Color.Green)
         ) {
 
             Column {
@@ -63,9 +63,16 @@ fun AddAlarm(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "Sound")
-                    Text("Volume")
-                    Text("Vibrate")
+                    Sound(
+                        modifier = Modifier.weight(0.34f),
+                    )
+                    Text(
+                        modifier = Modifier.weight(0.33f),
+                        text = "Volume"
+                    )
+                    Vibrate(
+                        modifier = Modifier.weight(0.33f),
+                    )
                 }
 
                 Row(
@@ -89,36 +96,28 @@ fun AddAlarm(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-
+            //TODO Maybe take the weight for this row and set size of button based on that
             // Bottom buttons
             Box(
                 modifier = Modifier.wrapContentSize(),
                 contentAlignment = Alignment.BottomStart
             ) {
-                Button(
-                    onClick = { /* TODO: Handle left button click */ },
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .size(56.dp)
-                        .background(Color.Red, CircleShape)
-                ) {
-                    Text("Left")
-                }
+                RoundButton(
+                    icon = CloseIcon,
+                    onClick = {}
+                )
             }
+
+            Text(text = "Time left for alarm here") // TODO
 
             Box(
                 modifier = Modifier.wrapContentSize(),
                 contentAlignment = Alignment.BottomEnd
             ) {
-                Button(
-                    onClick = { /* TODO: Handle right button click */ },
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .size(56.dp)
-                        .background(Color.Red, CircleShape)
-                ) {
-                    Text("Right")
-                }
+                RoundButton(
+                    icon = CheckIcon,
+                    onClick = {}
+                )
             }
         }
     }
@@ -128,7 +127,7 @@ fun AddAlarm(
 @Composable
 fun AddAlarmPreview() {
     MaterialTheme {
-        AddAlarm()
+//        AddAlarm()
     }
 
 }

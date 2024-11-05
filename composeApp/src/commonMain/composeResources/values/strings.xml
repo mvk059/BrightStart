@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
+    <string name="common_yes">Yes</string>
+    <string name="common_no">No</string>
+
     <string name="alarm_empty">It's empty! Add the first alarm so you don't miss an important moment!</string>
+
+    <string name="add_alarm_vibrate">Vibrate</string>
+    <string name="add_alarm_sound">Sound</string>
 </resources>
