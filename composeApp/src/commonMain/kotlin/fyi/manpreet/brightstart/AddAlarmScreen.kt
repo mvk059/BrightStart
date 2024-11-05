@@ -7,6 +7,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
+/**
+ *
+ *
+ * Sound, Volume, Vibrate, Repeat, Name
+ */
 @Composable
 fun AddAlarm(
 ) {

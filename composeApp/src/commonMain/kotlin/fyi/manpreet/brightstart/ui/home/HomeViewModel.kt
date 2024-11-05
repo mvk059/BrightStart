@@ -36,6 +36,7 @@ class HomeViewModel(
                         ringtoneReference = "",
                         vibrationStatus = true,
                         alarmDays = days,
+                        isActive = true,
                     )
                     val alarmId = repository.insertAlarm(alarm, days)
                     Logger.d { "Alarm inserted with ID: $alarmId" }

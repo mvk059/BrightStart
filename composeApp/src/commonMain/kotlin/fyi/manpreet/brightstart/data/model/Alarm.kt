@@ -6,6 +6,7 @@ data class Alarm(
     val ringtoneReference: String,
     val vibrationStatus: Boolean,
     val alarmDays: AlarmDays,
+    val isActive: Boolean,
 )
 
 data class AlarmDays(

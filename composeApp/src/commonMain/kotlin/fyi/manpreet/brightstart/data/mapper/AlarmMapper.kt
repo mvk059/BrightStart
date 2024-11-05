@@ -10,7 +10,8 @@ fun Alarm.toAlarmTable(): AlarmTable {
         time = time,
         name = name,
         ringtoneReference = ringtoneReference,
-        vibrationStatus = vibrationStatus
+        vibrationStatus = vibrationStatus,
+        isActive = isActive,
     )
 }
 
@@ -21,6 +22,7 @@ fun AlarmTable.toAlarm(alarmDays: AlarmDays = AlarmDays()): Alarm {
         ringtoneReference = ringtoneReference,
         vibrationStatus = vibrationStatus,
         alarmDays = alarmDays,
+        isActive = isActive,
     )
 }
 
