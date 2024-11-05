@@ -20,6 +20,7 @@ fun initKoin(config: KoinAppDeclaration? = null) =
             provideRepositoryModule,
             provideViewModelModule,
             provideDatabaseModule(),
+            provideRingtoneModule(),
         )
     }
 
