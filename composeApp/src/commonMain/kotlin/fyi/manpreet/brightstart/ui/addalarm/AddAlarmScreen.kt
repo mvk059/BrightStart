@@ -23,7 +23,9 @@ import fyi.manpreet.brightstart.ui.components.repeat.Repeat
 import fyi.manpreet.brightstart.ui.components.sound.Sound
 import fyi.manpreet.brightstart.ui.components.vibrate.Vibrate
 import fyi.manpreet.brightstart.ui.components.volume.Volume
+import fyi.manpreet.brightstart.ui.home.HomeEvent
 import fyi.manpreet.brightstart.ui.model.AlarmDaysItem
+import fyi.manpreet.brightstart.ui.model.AlarmItem
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -43,7 +45,13 @@ fun AddAlarm(
     modifier: Modifier = Modifier,
     alarmDaysItem: StateFlow<List<AlarmDaysItem>>,
     repeatDays: StateFlow<String>,
-    onRepeatItemClick: (AlarmDaysItem) -> Unit,
+    onSoundUpdate: (AddAlarmEvent) -> Unit,
+    onVolumeUpdate: (AddAlarmEvent) -> Unit,
+    onVibrateUpdate: (AddAlarmEvent) -> Unit,
+    onNameUpdate: (AddAlarmEvent) -> Unit,
+    onRepeatUpdate: (AddAlarmEvent) -> Unit,
+    onAddClick: () -> Unit,
+    onCloseClick: () -> Unit,
 ) {
 
     // TODO Adjust weight accordingly
@@ -58,12 +66,19 @@ fun AddAlarm(
 
         MiddleRow(
             modifier = Modifier.weight(0.3f),
+            onSoundUpdate = onSoundUpdate,
+            onVolumeUpdate = onVolumeUpdate,
+            onVibrateUpdate = onVibrateUpdate,
+            onNameUpdate = onNameUpdate,
             alarmDaysItem = alarmDaysItem,
             repeatDays = repeatDays,
-            onRepeatItemClick = onRepeatItemClick,
+            onRepeatUpdate = onRepeatUpdate,
         )
 
-        BottomRow()
+        BottomRow(
+            onAddClick = onAddClick,
+            onCloseClick = onCloseClick,
+        )
     }
 }
 
@@ -79,9 +94,13 @@ fun TimeSelection(modifier: Modifier = Modifier) {
 @Composable
 fun MiddleRow(
     modifier: Modifier = Modifier,
+    onSoundUpdate: (AddAlarmEvent) -> Unit,
+    onVolumeUpdate: (AddAlarmEvent) -> Unit,
+    onVibrateUpdate: (AddAlarmEvent) -> Unit,
+    onNameUpdate: (AddAlarmEvent) -> Unit,
     alarmDaysItem: StateFlow<List<AlarmDaysItem>>,
     repeatDays: StateFlow<String>,
-    onRepeatItemClick: (AlarmDaysItem) -> Unit,
+    onRepeatUpdate: (AddAlarmEvent) -> Unit,
 ) {
 
     val alarmDaysItem = alarmDaysItem.collectAsStateWithLifecycle()
@@ -100,12 +119,15 @@ fun MiddleRow(
             ) {
                 Sound(
                     modifier = Modifier.weight(0.34f),
+                    onSoundUpdate = onSoundUpdate,
                 )
                 Volume(
                     modifier = Modifier.weight(0.33f),
+                    onVolumeUpdate = onVolumeUpdate,
                 )
                 Vibrate(
                     modifier = Modifier.weight(0.33f),
+                    onVibrateUpdate = onVibrateUpdate,
                 )
             }
 
@@ -118,12 +140,13 @@ fun MiddleRow(
             ) {
                 Name(
 //                        modifier = Modifier.weight(0.5f), TODO Check
+                    onNameUpdate = onNameUpdate,
                 )
                 Repeat(
 //                        modifier = Modifier.weight(0.5f),
                     alarmDaysItem = alarmDaysItem.value,
                     repeatDays = repeatDays.value,
-                    onRepeatItemClick = onRepeatItemClick,
+                    onRepeatUpdate = onRepeatUpdate,
                 )
             }
 
@@ -134,6 +157,8 @@ fun MiddleRow(
 @Composable
 private fun BottomRow(
     modifier: Modifier = Modifier,
+    onAddClick: () -> Unit,
+    onCloseClick: () -> Unit,
 ) {
 
     Row(
@@ -150,7 +175,7 @@ private fun BottomRow(
         ) {
             RoundButton(
                 icon = CloseIcon,
-                onClick = {}
+                onClick = onCloseClick
             )
         }
 
@@ -162,7 +187,7 @@ private fun BottomRow(
         ) {
             RoundButton(
                 icon = CheckIcon,
-                onClick = {}
+                onClick = onAddClick
             )
         }
     }

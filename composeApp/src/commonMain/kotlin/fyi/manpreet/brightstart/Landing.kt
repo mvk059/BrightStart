@@ -9,6 +9,9 @@ import androidx.navigation.compose.rememberNavController
 import fyi.manpreet.brightstart.navigation.AddAlarmDestination
 import fyi.manpreet.brightstart.navigation.HomeDestination
 import fyi.manpreet.brightstart.ui.addalarm.AddAlarm
+import fyi.manpreet.brightstart.ui.addalarm.AddAlarmEvent
+import fyi.manpreet.brightstart.ui.addalarm.AddAlarmViewModel
+import fyi.manpreet.brightstart.ui.home.HomeEvent
 import fyi.manpreet.brightstart.ui.home.HomeScreen
 import fyi.manpreet.brightstart.ui.home.HomeViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -34,10 +37,23 @@ fun Landing(
             )
         }
         composable<AddAlarmDestination> {
+            // TODO Tie viewmodel to the scope of AddAlarm
+
+            val viewModel = koinViewModel<AddAlarmViewModel>()
+
             AddAlarm(
                 alarmDaysItem = viewModel.alarmDaysItem,
                 repeatDays = viewModel.repeatDays,
-                onRepeatItemClick = viewModel::onRepeatItemClick
+                onSoundUpdate = viewModel::onEvent,
+                onVolumeUpdate = viewModel::onEvent,
+                onVibrateUpdate = viewModel::onEvent,
+                onNameUpdate = viewModel::onEvent,
+                onRepeatUpdate = viewModel::onEvent,
+                onAddClick = {
+                    viewModel.onEvent(AddAlarmEvent.AddAlarm)
+                    navController.popBackStack()
+                },
+                onCloseClick = { navController.popBackStack() }, // TODO Check what's the issue with this
             )
         }
     }

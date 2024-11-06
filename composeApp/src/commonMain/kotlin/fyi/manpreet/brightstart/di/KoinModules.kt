@@ -4,6 +4,7 @@ import fyi.manpreet.brightstart.data.datasource.AlarmLocalDataSource
 import fyi.manpreet.brightstart.data.datasource.AlarmLocalDataSourceImpl
 import fyi.manpreet.brightstart.data.repository.AlarmRepository
 import fyi.manpreet.brightstart.data.repository.AlarmRepositoryImpl
+import fyi.manpreet.brightstart.ui.addalarm.AddAlarmViewModel
 import fyi.manpreet.brightstart.ui.home.HomeViewModel
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.singleOf
@@ -34,4 +35,5 @@ val provideRepositoryModule = module {
 
 val provideViewModelModule = module {
     viewModelOf(::HomeViewModel)
+    viewModelOf(::AddAlarmViewModel)
 }

@@ -4,8 +4,6 @@ sealed interface HomeEvent {
 
     data object FetchAlarms: HomeEvent
 
-    data object FetchAlarmDays: HomeEvent
-
     data object AddAlarm: HomeEvent
 
 }
