@@ -7,4 +7,5 @@
 
     <string name="add_alarm_vibrate">Vibrate</string>
     <string name="add_alarm_sound">Sound</string>
+    <string name="add_alarm_volume">Volume</string>
 </resources>

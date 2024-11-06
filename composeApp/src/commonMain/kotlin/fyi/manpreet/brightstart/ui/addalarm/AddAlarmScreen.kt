@@ -19,6 +19,7 @@ import fyi.manpreet.brightstart.ui.components.button.CloseIcon
 import fyi.manpreet.brightstart.ui.components.button.RoundButton
 import fyi.manpreet.brightstart.ui.components.sound.Sound
 import fyi.manpreet.brightstart.ui.components.vibrate.Vibrate
+import fyi.manpreet.brightstart.ui.components.volume.Volume
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /**
@@ -66,9 +67,8 @@ fun AddAlarm(
                     Sound(
                         modifier = Modifier.weight(0.34f),
                     )
-                    Text(
+                    Volume(
                         modifier = Modifier.weight(0.33f),
-                        text = "Volume"
                     )
                     Vibrate(
                         modifier = Modifier.weight(0.33f),
