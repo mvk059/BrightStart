@@ -11,6 +11,8 @@ data class AlarmTable(
     @ColumnInfo(name = "time") val time: String, // Store time in "HH:mm" format
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "ringtone_reference") val ringtoneReference: String,
+    @ColumnInfo(name = "ringtone_name") val ringtoneName: String,
+    @ColumnInfo(name = "volume") val volume: Int,
     @ColumnInfo(name = "vibration_status") val vibrationStatus: Boolean, // True for on, False for off
     @ColumnInfo(name = "is_active") val isActive: Boolean,
 )

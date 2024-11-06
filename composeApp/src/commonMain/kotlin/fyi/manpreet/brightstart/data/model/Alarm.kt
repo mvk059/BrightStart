@@ -6,6 +6,8 @@ data class Alarm(
     val time: String,
     val name: String,
     val ringtoneReference: String,
+    val ringtoneName: String,
+    val volume: Int, // TODO Add int range
     val vibrationStatus: Boolean,
     val alarmDays: AlarmDays,
     val isActive: Boolean,

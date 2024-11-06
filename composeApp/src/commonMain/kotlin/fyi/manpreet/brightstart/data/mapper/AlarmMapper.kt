@@ -10,6 +10,8 @@ fun Alarm.toAlarmTable(): AlarmTable {
         time = time,
         name = name,
         ringtoneReference = ringtoneReference,
+        ringtoneName = ringtoneName,
+        volume = volume,
         vibrationStatus = vibrationStatus,
         isActive = isActive,
     )
@@ -20,16 +22,13 @@ fun AlarmTable.toAlarm(alarmDays: AlarmDays = AlarmDays()): Alarm {
         time = time,
         name = name,
         ringtoneReference = ringtoneReference,
+        ringtoneName = ringtoneName,
+        volume = volume,
         vibrationStatus = vibrationStatus,
         alarmDays = alarmDays,
         isActive = isActive,
     )
 }
-
-// TODO Remove
-//fun List<AlarmTable>.toAlarm(): List<Alarm> {
-//    return map { it.toAlarm(alarmDays) }
-//}
 
 fun AlarmDays.toAlarmDaysTable(alarmId: Long): AlarmDaysTable {
     return AlarmDaysTable(
