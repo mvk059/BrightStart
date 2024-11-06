@@ -9,6 +9,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,14 +33,24 @@ fun Sound(
      // TODO Get & Add default sound
     val ringtonePicker: RingtonePicker = koinInject()
 
+    var selectedSoundPath by remember { mutableStateOf("") }
     var selectedSound by remember { mutableStateOf("") }
+
+    LaunchedEffect(true) {
+        ringtonePicker.getDefaultRingtone {
+            selectedSoundPath = it.first ?: ""
+            selectedSound = it.second ?: ""
+            println("Ringtone in callback3: $selectedSound")
+        }
+    }
 
     SoundContent(
         modifier = modifier,
         ringtonePicker = ringtonePicker,
         selectedSound = selectedSound,
         onSoundSelected = {
-            selectedSound = it.second ?: ""
+            if (it.first.isNullOrEmpty().not()) selectedSoundPath = it.first ?: ""
+            if (it.second.isNullOrEmpty().not()) selectedSound = it.second ?: ""
             println("Ringtone in callback2: $selectedSound")
         },
     )
@@ -82,7 +93,6 @@ private fun SoundContent(
                 overflow = TextOverflow.Ellipsis,
             )
 
-//            TODO Get default sound name
             Text(
                 text = selectedSound,
                 style = MaterialTheme.typography.bodySmall,

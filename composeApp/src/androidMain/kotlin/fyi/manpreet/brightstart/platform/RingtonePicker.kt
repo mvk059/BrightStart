@@ -26,6 +26,19 @@ actual class RingtonePicker(
         (activity as MainActivity).ringtoneCallback = ::callback
         activity.launchRingtoneActivity()
     }
+
+    actual fun getDefaultRingtone(defaultRingtone: (Pair<String?, String?>) -> Unit) {
+        val result = getDefaultAlarmRingtone(activity)
+        defaultRingtone(result)
+    }
+
+    private fun getDefaultAlarmRingtone(context: Context): Pair<String?, String?> {
+        val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+        val name = uri?.let {
+            RingtoneManager.getRingtone(context, it)?.getTitle(context)
+        }
+        return Pair(uri.toString(), name)
+    }
 }
 
 class RingtoneContract(private val context: Context) : ActivityResultContract<Int, Pair<Uri?, String?>?>() {
