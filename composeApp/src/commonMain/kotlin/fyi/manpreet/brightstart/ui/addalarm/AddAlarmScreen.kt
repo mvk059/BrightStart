@@ -14,12 +14,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import fyi.manpreet.brightstart.data.model.AlarmDaysItem
 import fyi.manpreet.brightstart.ui.components.button.CheckIcon
 import fyi.manpreet.brightstart.ui.components.button.CloseIcon
 import fyi.manpreet.brightstart.ui.components.button.RoundButton
+import fyi.manpreet.brightstart.ui.components.name.Name
+import fyi.manpreet.brightstart.ui.components.repeat.Repeat
 import fyi.manpreet.brightstart.ui.components.sound.Sound
 import fyi.manpreet.brightstart.ui.components.vibrate.Vibrate
 import fyi.manpreet.brightstart.ui.components.volume.Volume
+import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /**
@@ -30,95 +35,133 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
  * TODO Handle status bar and navigation bar background colors
  * TODO Set fonts
  * TODO Setup theme
+ * TODO Set text size/style based on theme for all text
+ * TODO Keep weight of both the rows same in terms of height as well
  */
 @Composable
 fun AddAlarm(
     modifier: Modifier = Modifier,
+    alarmDaysItem: StateFlow<List<AlarmDaysItem>>,
+    repeatDays: StateFlow<String>,
+    onRepeatItemClick: (AlarmDaysItem) -> Unit,
 ) {
+
+    // TODO Adjust weight accordingly
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(color = Color(0xFF1E1E26))
     ) {
 
-        Box(
-            modifier = Modifier
-                .weight(weight = 0.7f)
-                .fillMaxWidth()
-        ) {
+        TimeSelection(modifier = Modifier.weight(weight = 0.7f))
 
-        }
+        MiddleRow(
+            modifier = Modifier.weight(0.3f),
+            alarmDaysItem = alarmDaysItem,
+            repeatDays = repeatDays,
+            onRepeatItemClick = onRepeatItemClick,
+        )
 
-        Box(
-            modifier = Modifier
-                .weight(0.3f)
-                .fillMaxWidth()
-        ) {
+        BottomRow()
+    }
+}
 
-            Column {
+@Composable
+fun TimeSelection(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier.fillMaxWidth()
+    ) {
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Sound(
-                        modifier = Modifier.weight(0.34f),
-                    )
-                    Volume(
-                        modifier = Modifier.weight(0.33f),
-                    )
-                    Vibrate(
-                        modifier = Modifier.weight(0.33f),
-                    )
-                }
+    }
+}
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = "Repeat")
-                    Text("Name")
-                    Text("Time left")
-                }
+@Composable
+fun MiddleRow(
+    modifier: Modifier = Modifier,
+    alarmDaysItem: StateFlow<List<AlarmDaysItem>>,
+    repeatDays: StateFlow<String>,
+    onRepeatItemClick: (AlarmDaysItem) -> Unit,
+) {
 
-            }
-        }
+    val alarmDaysItem = alarmDaysItem.collectAsStateWithLifecycle()
+    val repeatDays = repeatDays.collectAsStateWithLifecycle()
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            //TODO Maybe take the weight for this row and set size of button based on that
-            // Bottom buttons
-            Box(
-                modifier = Modifier.wrapContentSize(),
-                contentAlignment = Alignment.BottomStart
+    Box(
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Column {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                RoundButton(
-                    icon = CloseIcon,
-                    onClick = {}
+                Sound(
+                    modifier = Modifier.weight(0.34f),
+                )
+                Volume(
+                    modifier = Modifier.weight(0.33f),
+                )
+                Vibrate(
+                    modifier = Modifier.weight(0.33f),
                 )
             }
 
-            Text(text = "Time left for alarm here") // TODO
-
-            Box(
-                modifier = Modifier.wrapContentSize(),
-                contentAlignment = Alignment.BottomEnd
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                RoundButton(
-                    icon = CheckIcon,
-                    onClick = {}
+                Name(
+//                        modifier = Modifier.weight(0.5f), TODO Check
+                )
+                Repeat(
+//                        modifier = Modifier.weight(0.5f),
+                    alarmDaysItem = alarmDaysItem.value,
+                    repeatDays = repeatDays.value,
+                    onRepeatItemClick = onRepeatItemClick,
                 )
             }
+
+        }
+    }
+}
+
+@Composable
+private fun BottomRow(modifier: Modifier = Modifier) {
+
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        //TODO Maybe take the weight for this row and set size of button based on that
+        // Bottom buttons
+        Box(
+            modifier = Modifier.wrapContentSize(),
+            contentAlignment = Alignment.BottomStart
+        ) {
+            RoundButton(
+                icon = CloseIcon,
+                onClick = {}
+            )
+        }
+
+        Text(text = "Time left for alarm here") // TODO
+
+        Box(
+            modifier = Modifier.wrapContentSize(),
+            contentAlignment = Alignment.BottomEnd
+        ) {
+            RoundButton(
+                icon = CheckIcon,
+                onClick = {}
+            )
         }
     }
 }

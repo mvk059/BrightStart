@@ -1,5 +1,7 @@
 package fyi.manpreet.brightstart.data.model
 
+import kotlin.Boolean
+
 data class Alarm(
     val time: String,
     val name: String,
@@ -18,3 +20,13 @@ data class AlarmDays(
     val saturday: Boolean = false,
     val sunday: Boolean = false,
 )
+
+data class AlarmDaysItem(
+    val id: DaysEnum,
+    val day: String,
+    val isSelected: Boolean,
+)
+
+enum class DaysEnum {
+    MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
+}

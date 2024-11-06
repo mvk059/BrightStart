@@ -11,15 +11,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import org.koin.compose.viewmodel.koinViewModel
+import fyi.manpreet.brightstart.data.model.Alarm
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = koinViewModel(),
+    alarms: StateFlow<List<Alarm>>,
     onClick: () -> Unit,
+    onAddAlarmClick: (HomeEvent) -> Unit,
 ) {
 
-    val alarms = viewModel.alarms.collectAsStateWithLifecycle()
+    val alarms = alarms.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -36,7 +38,7 @@ fun HomeScreen(
         }
 
         Text(
-            modifier = Modifier.clickable { viewModel.onEvent(HomeEvent.AddAlarm) },
+            modifier = Modifier.clickable { onAddAlarmClick(HomeEvent.AddAlarm) },
             text = "Add Alarm"
         )
     }

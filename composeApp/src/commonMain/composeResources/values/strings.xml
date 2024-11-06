@@ -8,4 +8,16 @@
     <string name="add_alarm_vibrate">Vibrate</string>
     <string name="add_alarm_sound">Sound</string>
     <string name="add_alarm_volume">Volume</string>
+    <string name="add_alarm_name">Alarm Name</string>
+    <string name="add_alarm_name_default">Alarm</string>
+
+    <string name="add_alarm_repeat">Repeat</string>
+    <string name="add_alarm_repeat_sun">Su</string>
+    <string name="add_alarm_repeat_mon">Mo</string>
+    <string name="add_alarm_repeat_tue">Tu</string>
+    <string name="add_alarm_repeat_wed">We</string>
+    <string name="add_alarm_repeat_thu">Th</string>
+    <string name="add_alarm_repeat_fri">Fr</string>
+    <string name="add_alarm_repeat_sat">Sa</string>
+
 </resources>

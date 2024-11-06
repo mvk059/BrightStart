@@ -10,11 +10,14 @@ import fyi.manpreet.brightstart.navigation.AddAlarmDestination
 import fyi.manpreet.brightstart.navigation.HomeDestination
 import fyi.manpreet.brightstart.ui.addalarm.AddAlarm
 import fyi.manpreet.brightstart.ui.home.HomeScreen
+import fyi.manpreet.brightstart.ui.home.HomeViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun Landing(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
+    viewModel: HomeViewModel = koinViewModel(),
 ) {
 
     NavHost(
@@ -25,11 +28,17 @@ fun Landing(
 
         composable<HomeDestination> {
             HomeScreen(
-                onClick = { navController.navigate(AddAlarmDestination) }
+                alarms = viewModel.alarms,
+                onClick = { navController.navigate(AddAlarmDestination) },
+                onAddAlarmClick = viewModel::onEvent
             )
         }
         composable<AddAlarmDestination> {
-            AddAlarm()
+            AddAlarm(
+                alarmDaysItem = viewModel.alarmDaysItem,
+                repeatDays = viewModel.repeatDays,
+                onRepeatItemClick = viewModel::onRepeatItemClick
+            )
         }
     }
 }
