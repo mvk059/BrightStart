@@ -26,6 +26,7 @@ import com.composables.core.MenuButton
 import com.composables.core.MenuContent
 import com.composables.core.MenuItem
 import com.composables.core.rememberMenuState
+import fyi.manpreet.brightstart.ui.addalarm.AddAlarmEvent
 import fyi.manpreet.brightstart.ui.components.name.NameIcon
 import fyi.manpreet.brightstart.ui.model.AlarmDaysItem
 import org.jetbrains.compose.resources.stringResource
@@ -35,7 +36,7 @@ fun Repeat(
     modifier: Modifier = Modifier,
     alarmDaysItem: List<AlarmDaysItem>,
     repeatDays: String,
-    onRepeatItemClick: (AlarmDaysItem) -> Unit,
+    onRepeatUpdate: (AddAlarmEvent) -> Unit,
 ) {
 
     // TODO Fix chip size
@@ -63,7 +64,7 @@ fun Repeat(
                 RepeatRow(
                     isExpanded = repeatMenuState.expanded,
                     alarmDaysItem = alarmDaysItem,
-                    onItemClick = onRepeatItemClick
+                    onRepeatUpdate = onRepeatUpdate
                 )
             }
         }
@@ -111,7 +112,7 @@ private fun RepeatContent(
 fun RepeatRow(
     isExpanded: Boolean,
     alarmDaysItem: List<AlarmDaysItem>,
-    onItemClick: (AlarmDaysItem) -> Unit,
+    onRepeatUpdate: (AddAlarmEvent) -> Unit,
 ) {
 
     if (!isExpanded) return
@@ -137,7 +138,7 @@ fun RepeatRow(
                     .wrapContentWidth()
                     .align(Alignment.CenterVertically)
                     .clickable {
-                        onItemClick(item)
+                        onRepeatUpdate(AddAlarmEvent.RepeatUpdate(item))
                     },
             ) {
                 Text(

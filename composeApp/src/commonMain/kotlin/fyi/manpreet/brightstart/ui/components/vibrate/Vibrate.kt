@@ -22,6 +22,7 @@ import brightstart.composeapp.generated.resources.Res
 import brightstart.composeapp.generated.resources.add_alarm_vibrate
 import brightstart.composeapp.generated.resources.common_no
 import brightstart.composeapp.generated.resources.common_yes
+import fyi.manpreet.brightstart.ui.addalarm.AddAlarmEvent
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -29,7 +30,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 // TODO Maybe keep the icon color as same. Check after adding all other components
 @Composable
 fun Vibrate(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onVibrateUpdate: (AddAlarmEvent) -> Unit,
 ) {
 
     var isVibrationOn by remember { mutableStateOf(false) }
@@ -44,7 +46,10 @@ fun Vibrate(
         icon = icon,
         statusText = statusText,
         tint = tint,
-        onVibrationToggle = { isVibrationOn = !isVibrationOn }
+        onVibrationToggle = {
+            isVibrationOn = !isVibrationOn
+            onVibrateUpdate(AddAlarmEvent.VibrateUpdate(isVibrationOn))
+        }
     )
 }
 
@@ -93,6 +98,6 @@ private fun VibrateContent(
 @Preview
 fun VibratePreview() {
     MaterialTheme {
-        Vibrate()
+        Vibrate(onVibrateUpdate = {})
     }
 }

@@ -19,12 +19,15 @@ import androidx.compose.ui.unit.dp
 import brightstart.composeapp.generated.resources.Res
 import brightstart.composeapp.generated.resources.add_alarm_name
 import brightstart.composeapp.generated.resources.add_alarm_name_default
+import fyi.manpreet.brightstart.ui.addalarm.AddAlarmEvent
+import fyi.manpreet.brightstart.ui.home.HomeEvent
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun Name(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNameUpdate: (AddAlarmEvent) -> Unit,
 ) {
 
     // TODO check for animations
@@ -43,7 +46,10 @@ fun Name(
         isExpanded = expanded,
         text = alarmName,
         placeholder = alarmName.text.ifEmpty { defaultAlarmName },
-        onTextChange = { alarmName = it },
+        onTextChange = {
+            alarmName = it
+            onNameUpdate(AddAlarmEvent.NameUpdate(it.text))
+        },
         onDone = { expanded = false },
     )
 }

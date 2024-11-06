@@ -34,12 +34,14 @@ import com.composables.core.MenuButton
 import com.composables.core.MenuContent
 import com.composables.core.MenuItem
 import com.composables.core.rememberMenuState
+import fyi.manpreet.brightstart.ui.addalarm.AddAlarmEvent
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Volume(
     modifier: Modifier = Modifier,
+    onVolumeUpdate: (AddAlarmEvent) -> Unit,
 ) {
 
     val volumeSelectionState = rememberMenuState(expanded = false)
@@ -78,7 +80,10 @@ fun Volume(
             MenuItem(onClick = { volumeSelectionState.expanded = false }) {
                 StretchySlider(
                     defaultValue = volumeValue.toFloat(),
-                    onValueChange = { volumeValue = it }
+                    onValueChange = {
+                        volumeValue = it
+                        onVolumeUpdate(AddAlarmEvent.VolumeUpdate(it))
+                    }
                 )
             }
         }

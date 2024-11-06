@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import brightstart.composeapp.generated.resources.Res
 import brightstart.composeapp.generated.resources.add_alarm_sound
 import fyi.manpreet.brightstart.platform.RingtonePicker
+import fyi.manpreet.brightstart.ui.addalarm.AddAlarmEvent
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
@@ -29,6 +30,7 @@ import org.koin.compose.koinInject
 @Composable
 fun Sound(
     modifier: Modifier = Modifier,
+    onSoundUpdate: (AddAlarmEvent) -> Unit,
 ) {
      // TODO Get & Add default sound
     val ringtonePicker: RingtonePicker = koinInject()
@@ -40,7 +42,8 @@ fun Sound(
         ringtonePicker.getDefaultRingtone {
             selectedSoundPath = it.first ?: ""
             selectedSound = it.second ?: ""
-            println("Ringtone in callback3: $selectedSound")
+            if (it.first.isNullOrEmpty().not() && it.second.isNullOrEmpty().not())
+                onSoundUpdate(AddAlarmEvent.SoundUpdate(it))
         }
     }
 
@@ -51,7 +54,9 @@ fun Sound(
         onSoundSelected = {
             if (it.first.isNullOrEmpty().not()) selectedSoundPath = it.first ?: ""
             if (it.second.isNullOrEmpty().not()) selectedSound = it.second ?: ""
-            println("Ringtone in callback2: $selectedSound")
+            if (it.first.isNullOrEmpty().not() && it.second.isNullOrEmpty().not())
+                onSoundUpdate(AddAlarmEvent.SoundUpdate(it))
+            // TODO Refactor Code something better
         },
     )
 }
