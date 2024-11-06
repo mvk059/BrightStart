@@ -1,15 +1,24 @@
 package fyi.manpreet.brightstart.ui.addalarm
 
 import androidx.lifecycle.ViewModel
+import co.touchlab.kermit.Logger
 import fyi.manpreet.brightstart.data.model.Alarm
 import fyi.manpreet.brightstart.data.model.AlarmDays
+import fyi.manpreet.brightstart.scheduler.AlarmScheduler
 import fyi.manpreet.brightstart.ui.model.AlarmDaysItem
+import fyi.manpreet.brightstart.ui.model.AlarmItem
 import fyi.manpreet.brightstart.ui.model.DaysEnum
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Duration.Companion.seconds
 
-class AddAlarmViewModel : ViewModel() {
+class AddAlarmViewModel(
+    private val alarmScheduler: AlarmScheduler,
+) : ViewModel() {
 
     val currentAlarm: StateFlow<Alarm?>
         field = MutableStateFlow(null)
@@ -25,7 +34,7 @@ class AddAlarmViewModel : ViewModel() {
 
     fun onEvent(event: AddAlarmEvent) {
         when (event) {
-            AddAlarmEvent.AddAlarm -> ::addAlarm
+            AddAlarmEvent.AddAlarm -> addAlarm()
             is AddAlarmEvent.SoundUpdate -> ::onSoundUpdate
             is AddAlarmEvent.VolumeUpdate -> ::onVolumeUpdate
             is AddAlarmEvent.VibrateUpdate -> ::onVibrateUpdate
@@ -47,7 +56,26 @@ class AddAlarmViewModel : ViewModel() {
         }
 
     private fun addAlarm() {
+        Logger.d("Alarm addAlarm")
+        val currentTime =
+            Clock.System.now().plus(10.seconds).toLocalDateTime(TimeZone.currentSystemDefault())
 
+        val alarm = Alarm(
+            localTime = currentTime,
+            time = "",
+            name = "New Alarm",
+            ringtoneReference = "",
+            ringtoneName = "",
+            volume = 0,
+            vibrationStatus = false,
+            alarmDays = AlarmDays(),
+            isActive = true,
+        )
+        val alarmDaysItem = AlarmDaysItem(DaysEnum.MONDAY, "Mon", false)
+        val item = AlarmItem(alarm, alarmDaysItem)
+
+        Logger.d("Alarm schedule start")
+        alarmScheduler.schedule(item)
     }
 
     private fun onSoundUpdate(data: Pair<String?, String?>) {

@@ -22,6 +22,7 @@ fun initKoin(config: KoinAppDeclaration? = null) =
             provideViewModelModule,
             provideDatabaseModule(),
             provideRingtoneModule(),
+            provideAlarmModule(),
         )
     }
 
