@@ -24,6 +24,7 @@ datastore = "1.1.1"
 room = "2.7.0-alpha11"
 ksp = "2.0.21-1.0.25"
 sqlite = "2.5.0-SNAPSHOT"
+composables-core = "1.19.1"
 
 androidx-composeBOM = "2024.10.01"
 androidx-activityCompose = "1.9.3"
@@ -99,6 +100,7 @@ sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sql
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 multiplatformSettings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
+composables-core = { module = "com.composables:core", version.ref = "composables-core" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

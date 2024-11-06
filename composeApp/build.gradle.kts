@@ -78,6 +78,7 @@ kotlin {
 
             implementation(libs.kermit)
             implementation(libs.multiplatformSettings)
+            implementation(libs.composables.core)
         }
     }
 }
