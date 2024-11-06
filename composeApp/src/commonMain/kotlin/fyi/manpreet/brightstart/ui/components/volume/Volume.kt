@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -34,7 +33,6 @@ import com.composables.core.Menu
 import com.composables.core.MenuButton
 import com.composables.core.MenuContent
 import com.composables.core.MenuItem
-import com.composables.core.MenuState
 import com.composables.core.rememberMenuState
 import org.jetbrains.compose.resources.stringResource
 
@@ -46,19 +44,14 @@ fun Volume(
 
     val volumeSelectionState = rememberMenuState(expanded = false)
 
-//    var isVolumeOn by remember { mutableStateOf(false) }
     var volumeValue by remember { mutableStateOf(100) }
     val icon by remember { derivedStateOf { if (volumeValue > 1) VolumeOnIcon else VolumeOffIcon } }
     val tint by remember { derivedStateOf { if (volumeValue > 1) Color.White else Color.Gray } }
-//    val icon = if (isVolumeOn) VolumeOnIcon else VolumeOffIcon
-//    val tint = if (isVolumeOn) Color.White else Color.Gray
 
     Menu(
-//        modifier = modifier,
         state = volumeSelectionState
     ) {
         MenuButton {
-//            BasicText("Toggle the menu")
             VolumeContent(
                 modifier = modifier,
                 icon = icon,
@@ -69,6 +62,7 @@ fun Volume(
         }
 
         // TODO play around with alignment and animation
+        // Add animated counter as well https://www.sinasamaki.com/animated-counter/
         MenuContent(
             alignment = Alignment.End,
             enter = scaleIn(
@@ -82,7 +76,6 @@ fun Volume(
             ) + fadeOut(tween(durationMillis = 75)),
         ) {
             MenuItem(onClick = { volumeSelectionState.expanded = false }) {
-//                BasicText("Close this menu")
                 StretchySlider(
                     defaultValue = volumeValue.toFloat(),
                     onValueChange = { volumeValue = it }
@@ -90,25 +83,6 @@ fun Volume(
             }
         }
     }
-
-//    VolumeContent(
-//        modifier = modifier,
-//        icon = icon,
-//        tint = tint,
-//        onVolumeClick = { volumeSelectionState.value = true }
-//    )
-//
-//    VolumeSelection(
-//        modifier = modifier.clickable { volumeSelectionState.value = true },
-////        icon = icon,
-//        state = volumeSelectionState,
-//        openMenu = volumeSelectionState.value,
-//        onOpenMenu = { volumeSelectionState.value = it },
-//
-////        statusText = statusText,
-////        tint = tint,
-//    )
-
 }
 
 @Composable
@@ -147,30 +121,6 @@ private fun VolumeContent(
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.LightGray,
             )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun VolumeSelection(
-    modifier: Modifier = Modifier,
-    state: MenuState,
-    openMenu: Boolean,
-    onOpenMenu: (Boolean) -> Unit,
-) {
-
-//    if (!openMenu) return
-
-    Menu(state = state) {
-        MenuButton {
-            BasicText("Toggle the menu")
-        }
-
-        MenuContent {
-            MenuItem(onClick = { state.expanded = false }) {
-                BasicText("Close this menu")
-            }
         }
     }
 }
