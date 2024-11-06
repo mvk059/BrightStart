@@ -1,5 +1,11 @@
 package fyi.manpreet.brightstart.ui.components.volume
 
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,20 +25,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import brightstart.composeapp.generated.resources.Res
-import brightstart.composeapp.generated.resources.add_alarm_vibrate
 import brightstart.composeapp.generated.resources.add_alarm_volume
-import brightstart.composeapp.generated.resources.common_no
-import brightstart.composeapp.generated.resources.common_yes
 import com.composables.core.Menu
 import com.composables.core.MenuButton
 import com.composables.core.MenuContent
 import com.composables.core.MenuItem
 import com.composables.core.MenuState
 import com.composables.core.rememberMenuState
-import kotlinx.datetime.TimeZone.Companion.of
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,7 +68,19 @@ fun Volume(
             )
         }
 
-        MenuContent {
+        // TODO play around with alignment and animation
+        MenuContent(
+            alignment = Alignment.End,
+            enter = scaleIn(
+                tween(durationMillis = 120, easing = LinearOutSlowInEasing),
+                initialScale = 0.8f,
+                transformOrigin = TransformOrigin(0f, 0f)
+            ) + fadeIn(tween(durationMillis = 30)),
+            exit = scaleOut(
+                tween(durationMillis = 1, delayMillis = 75),
+                targetScale = 1f
+            ) + fadeOut(tween(durationMillis = 75)),
+        ) {
             MenuItem(onClick = { volumeSelectionState.expanded = false }) {
 //                BasicText("Close this menu")
                 StretchySlider(
