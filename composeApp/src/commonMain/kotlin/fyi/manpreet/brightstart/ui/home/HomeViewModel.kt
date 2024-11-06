@@ -5,9 +5,10 @@ import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import fyi.manpreet.brightstart.data.model.Alarm
 import fyi.manpreet.brightstart.data.model.AlarmDays
-import fyi.manpreet.brightstart.data.model.AlarmDaysItem
-import fyi.manpreet.brightstart.data.model.DaysEnum
 import fyi.manpreet.brightstart.data.repository.AlarmRepository
+import fyi.manpreet.brightstart.ui.model.AlarmDaysItem
+import fyi.manpreet.brightstart.ui.model.AlarmItem
+import fyi.manpreet.brightstart.ui.model.DaysEnum
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -26,6 +27,9 @@ class HomeViewModel(
 
     val alarmDays: StateFlow<AlarmDays>
         field = MutableStateFlow(AlarmDays())
+
+    val alarmItem: StateFlow<AlarmItem?>
+        field = MutableStateFlow(null)
 
     val alarmDaysItem: StateFlow<List<AlarmDaysItem>>
         field = MutableStateFlow(initAlarmDays())

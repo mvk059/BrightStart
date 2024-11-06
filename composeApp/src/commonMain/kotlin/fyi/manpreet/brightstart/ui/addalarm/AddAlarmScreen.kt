@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import fyi.manpreet.brightstart.data.model.AlarmDaysItem
 import fyi.manpreet.brightstart.ui.components.button.CheckIcon
 import fyi.manpreet.brightstart.ui.components.button.CloseIcon
 import fyi.manpreet.brightstart.ui.components.button.RoundButton
@@ -24,6 +23,7 @@ import fyi.manpreet.brightstart.ui.components.repeat.Repeat
 import fyi.manpreet.brightstart.ui.components.sound.Sound
 import fyi.manpreet.brightstart.ui.components.vibrate.Vibrate
 import fyi.manpreet.brightstart.ui.components.volume.Volume
+import fyi.manpreet.brightstart.ui.model.AlarmDaysItem
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -132,7 +132,9 @@ fun MiddleRow(
 }
 
 @Composable
-private fun BottomRow(modifier: Modifier = Modifier) {
+private fun BottomRow(
+    modifier: Modifier = Modifier,
+) {
 
     Row(
         modifier = modifier.fillMaxWidth(),
