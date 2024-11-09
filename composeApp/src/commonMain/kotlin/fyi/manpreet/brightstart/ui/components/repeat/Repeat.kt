@@ -26,15 +26,15 @@ import com.composables.core.MenuButton
 import com.composables.core.MenuContent
 import com.composables.core.MenuItem
 import com.composables.core.rememberMenuState
+import fyi.manpreet.brightstart.data.model.Alarm.AlarmDays
 import fyi.manpreet.brightstart.ui.addalarm.AddAlarmEvent
 import fyi.manpreet.brightstart.ui.components.name.NameIcon
-import fyi.manpreet.brightstart.ui.model.AlarmDaysItem
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun Repeat(
     modifier: Modifier = Modifier,
-    alarmDaysItem: List<AlarmDaysItem>,
+    alarmDays: List<AlarmDays>,
     repeatDays: String,
     onRepeatUpdate: (AddAlarmEvent) -> Unit,
 ) {
@@ -63,7 +63,7 @@ fun Repeat(
             MenuItem(onClick = { repeatMenuState.expanded = false }) {
                 RepeatRow(
                     isExpanded = repeatMenuState.expanded,
-                    alarmDaysItem = alarmDaysItem,
+                    alarmDays = alarmDays,
                     onRepeatUpdate = onRepeatUpdate
                 )
             }
@@ -111,7 +111,7 @@ private fun RepeatContent(
 @Composable
 fun RepeatRow(
     isExpanded: Boolean,
-    alarmDaysItem: List<AlarmDaysItem>,
+    alarmDays: List<AlarmDays>,
     onRepeatUpdate: (AddAlarmEvent) -> Unit,
 ) {
 
@@ -126,7 +126,7 @@ fun RepeatRow(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        alarmDaysItem.forEach { item ->
+        alarmDays.forEach { item ->
             Box(
                 modifier = Modifier
                     .padding(horizontal = 8.dp, vertical = 16.dp)

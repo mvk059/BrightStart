@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import fyi.manpreet.brightstart.data.model.Alarm
 import fyi.manpreet.brightstart.ui.components.button.CheckIcon
 import fyi.manpreet.brightstart.ui.components.button.CloseIcon
 import fyi.manpreet.brightstart.ui.components.button.RoundButton
@@ -23,9 +24,6 @@ import fyi.manpreet.brightstart.ui.components.repeat.Repeat
 import fyi.manpreet.brightstart.ui.components.sound.Sound
 import fyi.manpreet.brightstart.ui.components.vibrate.Vibrate
 import fyi.manpreet.brightstart.ui.components.volume.Volume
-import fyi.manpreet.brightstart.ui.home.HomeEvent
-import fyi.manpreet.brightstart.ui.model.AlarmDaysItem
-import fyi.manpreet.brightstart.ui.model.AlarmItem
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -43,7 +41,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun AddAlarm(
     modifier: Modifier = Modifier,
-    alarmDaysItem: StateFlow<List<AlarmDaysItem>>,
+    alarm: StateFlow<Alarm>,
     repeatDays: StateFlow<String>,
     onSoundUpdate: (AddAlarmEvent) -> Unit,
     onVolumeUpdate: (AddAlarmEvent) -> Unit,
@@ -70,7 +68,7 @@ fun AddAlarm(
             onVolumeUpdate = onVolumeUpdate,
             onVibrateUpdate = onVibrateUpdate,
             onNameUpdate = onNameUpdate,
-            alarmDaysItem = alarmDaysItem,
+            alarm = alarm,
             repeatDays = repeatDays,
             onRepeatUpdate = onRepeatUpdate,
         )
@@ -98,13 +96,15 @@ fun MiddleRow(
     onVolumeUpdate: (AddAlarmEvent) -> Unit,
     onVibrateUpdate: (AddAlarmEvent) -> Unit,
     onNameUpdate: (AddAlarmEvent) -> Unit,
-    alarmDaysItem: StateFlow<List<AlarmDaysItem>>,
+    alarm: StateFlow<Alarm>,
     repeatDays: StateFlow<String>,
     onRepeatUpdate: (AddAlarmEvent) -> Unit,
 ) {
 
-    val alarmDaysItem = alarmDaysItem.collectAsStateWithLifecycle()
+    val alarm = alarm.collectAsStateWithLifecycle()
     val repeatDays = repeatDays.collectAsStateWithLifecycle()
+
+    println("Current Alarm MiddleRow: ${alarm.value}")
 
     Box(
         modifier = modifier.fillMaxWidth()
@@ -144,7 +144,7 @@ fun MiddleRow(
                 )
                 Repeat(
 //                        modifier = Modifier.weight(0.5f),
-                    alarmDaysItem = alarmDaysItem.value,
+                    alarmDays = alarm.value.alarmDays,
                     repeatDays = repeatDays.value,
                     onRepeatUpdate = onRepeatUpdate,
                 )

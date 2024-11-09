@@ -1,6 +1,6 @@
 package fyi.manpreet.brightstart.ui.addalarm
 
-import fyi.manpreet.brightstart.ui.model.AlarmDaysItem
+import fyi.manpreet.brightstart.data.model.Alarm.AlarmDays
 
 sealed interface AddAlarmEvent {
 
@@ -14,6 +14,6 @@ sealed interface AddAlarmEvent {
 
     data class NameUpdate(val name: String) : AddAlarmEvent
 
-    data class RepeatUpdate(val item: AlarmDaysItem): AddAlarmEvent
+    data class RepeatUpdate(val item: AlarmDays) : AddAlarmEvent
 
 }
