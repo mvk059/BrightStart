@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentSize
@@ -19,6 +20,7 @@ import fyi.manpreet.brightstart.data.model.Alarm
 import fyi.manpreet.brightstart.ui.components.button.CheckIcon
 import fyi.manpreet.brightstart.ui.components.button.CloseIcon
 import fyi.manpreet.brightstart.ui.components.button.RoundButton
+import fyi.manpreet.brightstart.ui.components.clock.Clock
 import fyi.manpreet.brightstart.ui.components.name.Name
 import fyi.manpreet.brightstart.ui.components.repeat.Repeat
 import fyi.manpreet.brightstart.ui.components.sound.Sound
@@ -43,16 +45,17 @@ fun AddAlarm(
     modifier: Modifier = Modifier,
     alarm: StateFlow<Alarm>,
     repeatDays: StateFlow<String>,
-    onSoundUpdate: (AddAlarmEvent) -> Unit,
     onVolumeUpdate: (AddAlarmEvent) -> Unit,
     onVibrateUpdate: (AddAlarmEvent) -> Unit,
     onNameUpdate: (AddAlarmEvent) -> Unit,
     onRepeatUpdate: (AddAlarmEvent) -> Unit,
+    openRingtonePicker: () -> Unit,
     onAddClick: () -> Unit,
     onCloseClick: () -> Unit,
 ) {
 
     // TODO Adjust weight accordingly
+    println("AddAlarmScreen: ${alarm.value}")
 
     Column(
         modifier = modifier
@@ -60,45 +63,134 @@ fun AddAlarm(
             .background(color = Color(0xFF1E1E26))
     ) {
 
-        TimeSelection(modifier = Modifier.weight(weight = 0.7f))
+        // 70% of the screen
+        Row(
+            modifier = Modifier
+                .weight(0.7f)
+                .fillMaxWidth()
+        ) {
+            // Left half of the 70% section
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .background(color = Color.Gray)
+            ) {
+                Text(
+                    text = "Left 35%",
+                    modifier = Modifier.align(Alignment.Center),
+                    color = Color.White
+                )
+            }
 
-        MiddleRow(
-            modifier = Modifier.weight(0.3f),
-            onSoundUpdate = onSoundUpdate,
-            onVolumeUpdate = onVolumeUpdate,
-            onVibrateUpdate = onVibrateUpdate,
-            onNameUpdate = onNameUpdate,
-            alarm = alarm,
-            repeatDays = repeatDays,
-            onRepeatUpdate = onRepeatUpdate,
-        )
+            // Right half of the 70% section
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .background(color = Color.LightGray)
+            ) {
+                Text(
+                    text = "Right 35%",
+                    modifier = Modifier.align(Alignment.Center),
+                    color = Color.Black
+                )
+            }
+        }
 
-        BottomRow(
-            onAddClick = onAddClick,
-            onCloseClick = onCloseClick,
-        )
+        // 30% of the screen
+        Column(
+            modifier = Modifier
+                .weight(0.3f)
+                .fillMaxWidth()
+                .background(color = Color.DarkGray)
+        ) {
+
+            MiddleRow(
+//                modifier = Modifier.weight(0.3f),
+                onVolumeUpdate = onVolumeUpdate,
+                onVibrateUpdate = onVibrateUpdate,
+                onNameUpdate = onNameUpdate,
+                alarm = alarm,
+                repeatDays = repeatDays,
+                onRepeatUpdate = onRepeatUpdate,
+                openRingtonePicker = openRingtonePicker,
+            )
+
+            BottomRow(
+                onAddClick = onAddClick,
+                onCloseClick = onCloseClick,
+            )
+
+//            // First row
+//            Box(
+//                modifier = Modifier
+//                    .weight(1f)
+//                    .fillMaxWidth()
+//                    .background(color = Color.Red)
+//            ) {
+//                Text(
+//                    text = "Row 1",
+//                    modifier = Modifier.align(Alignment.Center),
+//                    color = Color.White
+//                )
+//            }
+//
+//            // Second row
+//            Box(
+//                modifier = Modifier
+//                    .weight(1f)
+//                    .fillMaxWidth()
+//                    .background(color = Color.Green)
+//            ) {
+//                Text(
+//                    text = "Row 2",
+//                    modifier = Modifier.align(Alignment.Center),
+//                    color = Color.White
+//                )
+//            }
+//
+//            // Third row
+//            Box(
+//                modifier = Modifier
+//                    .weight(1f)
+//                    .fillMaxWidth()
+//                    .background(color = Color.Blue)
+//            ) {
+//                Text(
+//                    text = "Row 3",
+//                    modifier = Modifier.align(Alignment.Center),
+//                    color = Color.White
+//                )
+//            }
+        }
+
+
     }
 }
 
 @Composable
 fun TimeSelection(modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxSize()
     ) {
 
+        Clock(
+            modifier = modifier.fillMaxWidth()
+        )
     }
 }
 
 @Composable
 fun MiddleRow(
     modifier: Modifier = Modifier,
-    onSoundUpdate: (AddAlarmEvent) -> Unit,
+    alarm: StateFlow<Alarm>,
+    repeatDays: StateFlow<String>,
     onVolumeUpdate: (AddAlarmEvent) -> Unit,
     onVibrateUpdate: (AddAlarmEvent) -> Unit,
     onNameUpdate: (AddAlarmEvent) -> Unit,
-    alarm: StateFlow<Alarm>,
-    repeatDays: StateFlow<String>,
     onRepeatUpdate: (AddAlarmEvent) -> Unit,
+    openRingtonePicker: () -> Unit,
 ) {
 
     val alarm = alarm.collectAsStateWithLifecycle()
@@ -119,7 +211,8 @@ fun MiddleRow(
             ) {
                 Sound(
                     modifier = Modifier.weight(0.34f),
-                    onSoundUpdate = onSoundUpdate,
+                    alarmName = alarm.value.ringtoneName,
+                    openRingtonePicker = openRingtonePicker,
                 )
                 Volume(
                     modifier = Modifier.weight(0.33f),

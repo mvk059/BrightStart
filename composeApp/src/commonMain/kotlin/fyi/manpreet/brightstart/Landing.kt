@@ -1,7 +1,9 @@
 package fyi.manpreet.brightstart
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -23,6 +25,8 @@ fun Landing(
     homeViewModel: HomeViewModel = koinViewModel(),
 ) {
 
+    val ringtoneData = homeViewModel.ringtonePickerData.collectAsStateWithLifecycle()
+
     NavHost(
         navController = navController,
         startDestination = HomeDestination,
@@ -34,7 +38,8 @@ fun Landing(
                 alarms = homeViewModel.alarms,
                 navController = navController,
                 onAddAlarmClick = {
-                    navController.navigate(AddAlarmDestination()) },
+                    navController.navigate(AddAlarmDestination())
+                },
                 onAlarmClick = {
                     navController.navigate(AddAlarmDestination(it.id)) // TODO Pass current alarm to edit
                 },
@@ -42,6 +47,7 @@ fun Landing(
                 onReload = homeViewModel::onEvent,
             )
         }
+
         composable<AddAlarmDestination> {
             // TODO Setup autostart to keep the scheduled alarms running after restart
 
@@ -49,14 +55,20 @@ fun Landing(
             val args = it.toRoute<AddAlarmDestination>()
             viewModel.updateCurrentAlarm(args.alarmId)
 
+            LaunchedEffect(ringtoneData.value) {
+                val data = ringtoneData.value
+                if (data != null) {
+                    viewModel.onEvent(AddAlarmEvent.SoundUpdate(data))
+                }
+            }
             AddAlarm(
                 alarm = viewModel.currentAlarm,
                 repeatDays = viewModel.repeatDays,
-                onSoundUpdate = viewModel::onEvent,
                 onVolumeUpdate = viewModel::onEvent,
                 onVibrateUpdate = viewModel::onEvent,
                 onNameUpdate = viewModel::onEvent,
                 onRepeatUpdate = viewModel::onEvent,
+                openRingtonePicker = { homeViewModel.updateRingtoneState(true) },
                 onAddClick = {
                     viewModel.onEvent(AddAlarmEvent.AddAlarm)
                     navController.previousBackStackEntry?.savedStateHandle?.set("reload", true)
@@ -64,6 +76,7 @@ fun Landing(
                 },
                 onCloseClick = { navController.popBackStack() }, // TODO Check what's the issue with this
             )
+
         }
     }
 }

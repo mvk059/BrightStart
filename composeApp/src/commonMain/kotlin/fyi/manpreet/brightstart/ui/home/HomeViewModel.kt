@@ -23,6 +23,23 @@ class HomeViewModel(
     val alarms: StateFlow<List<Alarm>>
         field = MutableStateFlow(emptyList())
 
+    val ringtonePickerState: StateFlow<Boolean>
+        field = MutableStateFlow(false)
+
+    val ringtonePickerData: StateFlow<Pair<String?, String?>?>
+        field = MutableStateFlow(null)
+
+    fun updateRingtoneState(state: Boolean) {
+        println("Ringtone state: $state")
+        ringtonePickerState.update { state }
+    }
+
+    fun updateRingtoneData(data: Pair<String?, String?>?) {
+        println("Ringtone data: $data")
+        ringtonePickerData.update { data }
+        updateRingtoneState(false)
+    }
+
     fun onEvent(event: HomeEvent) {
         when (event) {
             HomeEvent.FetchAlarms -> {

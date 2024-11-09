@@ -21,7 +21,6 @@ fun initKoin(config: KoinAppDeclaration? = null) =
             provideRepositoryModule,
             provideViewModelModule,
             provideDatabaseModule(),
-            provideRingtoneModule(),
             provideAlarmModule(),
         )
     }
@@ -35,6 +34,6 @@ val provideRepositoryModule = module {
 }
 
 val provideViewModelModule = module {
-    viewModelOf(::HomeViewModel)
+    singleOf(::HomeViewModel)
     viewModelOf(::AddAlarmViewModel)
 }
