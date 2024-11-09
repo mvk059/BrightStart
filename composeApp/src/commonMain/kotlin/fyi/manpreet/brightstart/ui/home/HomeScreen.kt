@@ -1,45 +1,89 @@
 package fyi.manpreet.brightstart.ui.home
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import fyi.manpreet.brightstart.data.model.Alarm
+import fyi.manpreet.brightstart.ui.components.empty.EmptyView
 import kotlinx.coroutines.flow.StateFlow
+import kotlin.Boolean
 
 @Composable
 fun HomeScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController,
     alarms: StateFlow<List<Alarm>>,
-    onClick: () -> Unit,
-    onAddAlarmClick: (HomeEvent) -> Unit,
+    onAlarmClick: (Alarm) -> Unit,
+    onAddAlarmClick: () -> Unit,
+    onAlarmStatusChange: (HomeEvent) -> Unit,
+    onReload: (HomeEvent) -> Unit,
+) {
+
+    val shouldReload: State<Boolean>? =
+        navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<Boolean>(
+            "reload",
+            false
+        )?.collectAsStateWithLifecycle()
+    LaunchedEffect(shouldReload) {
+        if (shouldReload?.value == true) {
+            println("OnReload")
+            onReload(HomeEvent.FetchAlarms)
+            navController.currentBackStackEntry?.savedStateHandle?.set("reload", false) // TODO Add constant
+        }
+    }
+
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        topBar = {},
+        floatingActionButton = {
+            // TODO Check alignment
+            Button(
+                onClick = { onAddAlarmClick() },
+            ) {
+                Text("Add Alarm")
+            }
+        },
+    ) {
+
+        Box(modifier = modifier.fillMaxSize()) {
+            HomeContent(
+                alarms = alarms,
+                onAlarmClick = onAlarmClick,
+                onAlarmStatusChange = onAlarmStatusChange,
+            )
+        }
+    }
+
+}
+
+@Composable
+fun HomeContent(
+    modifier: Modifier = Modifier,
+    alarms: StateFlow<List<Alarm>>,
+    onAlarmClick: (Alarm) -> Unit,
+    onAlarmStatusChange: (HomeEvent) -> Unit,
 ) {
 
     val alarms = alarms.collectAsStateWithLifecycle()
 
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        alarms.value.forEach { alarm ->
-            Text(
-                modifier = Modifier.clickable { onClick() },
-                text = "${alarm.time} : ${alarm.name}\n${alarm.alarmDays}"
+    Column {
+        if (alarms.value.isEmpty()) {
+            EmptyView()
+        } else {
+            AlarmList(
+                alarms = alarms.value,
+                onAlarmClick = onAlarmClick,
+                onAlarmStatusChange = onAlarmStatusChange,
             )
-
-            Spacer(modifier = Modifier.padding(16.dp))
-
         }
-
-        Text(
-            modifier = Modifier.clickable { onAddAlarmClick(HomeEvent.AddAlarm) },
-            text = "Add Alarm"
-        )
     }
 }
