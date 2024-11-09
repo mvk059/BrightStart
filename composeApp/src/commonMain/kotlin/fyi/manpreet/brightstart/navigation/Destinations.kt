@@ -6,4 +6,6 @@ import kotlinx.serialization.Serializable
 object HomeDestination
 
 @Serializable
-object AddAlarmDestination
+data class AddAlarmDestination(
+    val alarmId: Long? = null,
+)
