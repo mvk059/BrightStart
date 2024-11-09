@@ -2,7 +2,6 @@ package fyi.manpreet.brightstart.data.database
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "alarm_table")
@@ -15,22 +14,6 @@ data class AlarmTable(
     @ColumnInfo(name = "volume") val volume: Int,
     @ColumnInfo(name = "vibration_status") val vibrationStatus: Boolean, // True for on, False for off
     @ColumnInfo(name = "is_active") val isActive: Boolean,
-)
-
-@Entity(
-    tableName = "alarm_table_days",
-    foreignKeys = [
-        ForeignKey(
-            entity = AlarmTable::class,
-            parentColumns = ["id"],
-            childColumns = ["alarm_id"],
-            onDelete = ForeignKey.CASCADE
-        )
-    ]
-)
-data class AlarmDaysTable(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0L,
-    @ColumnInfo(name = "alarm_id") val alarmId: Long,
     @ColumnInfo(name = "monday") val monday: Boolean = false,
     @ColumnInfo(name = "tuesday") val tuesday: Boolean = false,
     @ColumnInfo(name = "wednesday") val wednesday: Boolean = false,
