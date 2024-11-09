@@ -6,26 +6,27 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.Boolean
 
-// TODO Use LocalDateTime instead of time?
 data class Alarm(
-    val localTime: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+    val id: Long = 0L,
+    val localTime: LocalDateTime = Clock.System.now()
+        .toLocalDateTime(TimeZone.currentSystemDefault()),
     val time: String,
     val name: String,
     val ringtoneReference: String,
     val ringtoneName: String,
     val volume: Int, // TODO Add int range
     val vibrationStatus: Boolean,
-    val alarmDays: AlarmDays,
+    val alarmDays: List<AlarmDays>,
     val isActive: Boolean,
-)
+) {
 
-// TODO Replace this with AlarmDays???
-data class AlarmDays(
-    val monday: Boolean = false,
-    val tuesday: Boolean = false,
-    val wednesday: Boolean = false,
-    val thursday: Boolean = false,
-    val friday: Boolean = false,
-    val saturday: Boolean = false,
-    val sunday: Boolean = false,
-)
+    data class AlarmDays(
+        val id: DaysEnum,
+        val day: String,
+        val isSelected: Boolean,
+    )
+}
+
+enum class DaysEnum {
+    MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
+}
