@@ -1,13 +1,13 @@
 package fyi.manpreet.brightstart.scheduler
 
-import fyi.manpreet.brightstart.ui.model.AlarmItem
+import fyi.manpreet.brightstart.data.model.Alarm
 
 interface AlarmScheduler {
-    fun schedule(alarmItem: AlarmItem)
-    fun cancel(alarmItem: AlarmItem)
+    fun schedule(alarmItem: Alarm)
+    fun cancel(alarmItem: Alarm)
 }
 
 expect class AlarmSchedulerImpl : AlarmScheduler {
-    override fun schedule(alarmItem: AlarmItem)
-    override fun cancel(alarmItem: AlarmItem)
+    override fun schedule(alarm: Alarm)
+    override fun cancel(alarm: Alarm)
 }
