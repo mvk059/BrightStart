@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,7 +20,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import brightstart.composeapp.generated.resources.Res
 import brightstart.composeapp.generated.resources.add_alarm_sound
-import fyi.manpreet.brightstart.ui.addalarm.AddAlarmEvent
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -40,7 +38,6 @@ fun Sound(
         selectedSound = alarmName
     }
 
-
     SoundContent(
         modifier = modifier,
         selectedSound = selectedSound,
@@ -55,13 +52,10 @@ private fun SoundContent(
     openRingtonePicker: () -> Unit,
 ) {
 
-    Box(
-        modifier = modifier.wrapContentSize().clickable {
-            openRingtonePicker()
-        }
-    ) {
+    Box(modifier = modifier) {
 
         Column(
+            modifier = Modifier.align(Alignment.Center).clickable { openRingtonePicker() },
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -85,9 +79,7 @@ private fun SoundContent(
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.LightGray,
             )
-
         }
-
     }
 }
 

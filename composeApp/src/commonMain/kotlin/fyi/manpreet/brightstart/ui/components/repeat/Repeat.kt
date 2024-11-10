@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -45,27 +44,31 @@ fun Repeat(
     // TODO Logic to handle repeat days text
     val repeatMenuState = rememberMenuState(expanded = false)
 
-    Menu(
-        state = repeatMenuState
+    Box(
+        modifier = modifier
     ) {
-
-        MenuButton {
-            RepeatContent(
-                modifier = modifier,
-                repeatDays = repeatDays,
-                onNameClick = { repeatMenuState.expanded = true }
-            )
-        }
-
-        MenuContent(
-            alignment = Alignment.CenterHorizontally,
+        Menu(
+            state = repeatMenuState,
+            modifier = Modifier.align(Alignment.Center),
         ) {
-            MenuItem(onClick = { repeatMenuState.expanded = false }) {
-                RepeatRow(
-                    isExpanded = repeatMenuState.expanded,
-                    alarmDays = alarmDays,
-                    onRepeatUpdate = onRepeatUpdate
+
+            MenuButton {
+                RepeatContent(
+                    repeatDays = repeatDays,
+                    onNameClick = { repeatMenuState.expanded = true }
                 )
+            }
+
+            MenuContent(
+                alignment = Alignment.CenterHorizontally,
+            ) {
+                MenuItem(onClick = { repeatMenuState.expanded = false }) {
+                    RepeatRow(
+                        isExpanded = repeatMenuState.expanded,
+                        alarmDays = alarmDays,
+                        onRepeatUpdate = onRepeatUpdate
+                    )
+                }
             }
         }
     }
@@ -77,12 +80,10 @@ private fun RepeatContent(
     repeatDays: String,
     onNameClick: () -> Unit,
 ) {
-    Box(
-        modifier = modifier.wrapContentSize()
-    ) {
+    Box(modifier = modifier) {
 
         Column(
-            modifier = Modifier.clickable { onNameClick() },
+            modifier = Modifier.align(Alignment.Center).clickable { onNameClick() },
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {

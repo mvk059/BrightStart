@@ -10,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -50,41 +51,46 @@ fun Volume(
     val icon by remember { derivedStateOf { if (volumeValue > 1) VolumeOnIcon else VolumeOffIcon } }
     val tint by remember { derivedStateOf { if (volumeValue > 1) Color.White else Color.Gray } }
 
-    Menu(
-        state = volumeSelectionState
+    Box(
+        modifier = modifier
     ) {
-        MenuButton {
-            VolumeContent(
-                modifier = modifier,
-                icon = icon,
-                volumeValue = volumeValue,
-                tint = tint,
-                onVolumeClick = { volumeSelectionState.expanded = true }
-            )
-        }
-
-        // TODO play around with alignment and animation
-        // Add animated counter as well https://www.sinasamaki.com/animated-counter/
-        MenuContent(
-            alignment = Alignment.End,
-            enter = scaleIn(
-                tween(durationMillis = 120, easing = LinearOutSlowInEasing),
-                initialScale = 0.8f,
-                transformOrigin = TransformOrigin(0f, 0f)
-            ) + fadeIn(tween(durationMillis = 30)),
-            exit = scaleOut(
-                tween(durationMillis = 1, delayMillis = 75),
-                targetScale = 1f
-            ) + fadeOut(tween(durationMillis = 75)),
+        Menu(
+            state = volumeSelectionState,
+            modifier = Modifier.align(Alignment.Center),
         ) {
-            MenuItem(onClick = { volumeSelectionState.expanded = false }) {
-                StretchySlider(
-                    defaultValue = volumeValue.toFloat(),
-                    onValueChange = {
-                        volumeValue = it
-                        onVolumeUpdate(AddAlarmEvent.VolumeUpdate(it))
-                    }
+            MenuButton {
+                VolumeContent(
+//                modifier = modifier,
+                    icon = icon,
+                    volumeValue = volumeValue,
+                    tint = tint,
+                    onVolumeClick = { volumeSelectionState.expanded = true }
                 )
+            }
+
+            // TODO play around with alignment and animation
+            // Add animated counter as well https://www.sinasamaki.com/animated-counter/
+            MenuContent(
+                alignment = Alignment.End,
+                enter = scaleIn(
+                    tween(durationMillis = 120, easing = LinearOutSlowInEasing),
+                    initialScale = 0.8f,
+                    transformOrigin = TransformOrigin(0f, 0f)
+                ) + fadeIn(tween(durationMillis = 30)),
+                exit = scaleOut(
+                    tween(durationMillis = 1, delayMillis = 75),
+                    targetScale = 1f
+                ) + fadeOut(tween(durationMillis = 75)),
+            ) {
+                MenuItem(onClick = { volumeSelectionState.expanded = false }) {
+                    StretchySlider(
+                        defaultValue = volumeValue.toFloat(),
+                        onValueChange = {
+                            volumeValue = it
+                            onVolumeUpdate(AddAlarmEvent.VolumeUpdate(it))
+                        }
+                    )
+                }
             }
         }
     }
@@ -99,12 +105,10 @@ private fun VolumeContent(
     onVolumeClick: () -> Unit,
 ) {
 
-    Box(
-        modifier = modifier.wrapContentSize()
-    ) {
+    Box(modifier = modifier) {
 
         Column(
-            modifier = Modifier.clickable { onVolumeClick() },
+            modifier = Modifier.align(Alignment.Center).clickable { onVolumeClick() },
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {

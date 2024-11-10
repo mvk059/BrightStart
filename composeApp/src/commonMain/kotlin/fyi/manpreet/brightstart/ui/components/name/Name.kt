@@ -20,7 +20,6 @@ import brightstart.composeapp.generated.resources.Res
 import brightstart.composeapp.generated.resources.add_alarm_name
 import brightstart.composeapp.generated.resources.add_alarm_name_default
 import fyi.manpreet.brightstart.ui.addalarm.AddAlarmEvent
-import fyi.manpreet.brightstart.ui.home.HomeEvent
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 
@@ -60,12 +59,10 @@ private fun NameContent(
     alarmName: String,
     onNameClick: () -> Unit,
 ) {
-    Box(
-        modifier = modifier.wrapContentSize()
-    ) {
+    Box(modifier = modifier) {
 
         Column(
-            modifier = Modifier.clickable { onNameClick() },
+            modifier = Modifier.align(Alignment.Center).clickable { onNameClick() },
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -87,9 +84,7 @@ private fun NameContent(
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.LightGray,
             )
-
         }
-
     }
 }
 
