@@ -1,14 +1,12 @@
 package fyi.manpreet.brightstart.ui.addalarm
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,15 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fyi.manpreet.brightstart.data.model.Alarm
-import fyi.manpreet.brightstart.ui.components.button.CheckIcon
-import fyi.manpreet.brightstart.ui.components.button.CloseIcon
-import fyi.manpreet.brightstart.ui.components.button.RoundButton
+import fyi.manpreet.brightstart.ui.addalarm.items.AddAlarmRowOne
+import fyi.manpreet.brightstart.ui.addalarm.items.AddAlarmRowThree
+import fyi.manpreet.brightstart.ui.addalarm.items.AddAlarmRowTwo
 import fyi.manpreet.brightstart.ui.components.clock.Clock
-import fyi.manpreet.brightstart.ui.components.name.Name
-import fyi.manpreet.brightstart.ui.components.repeat.Repeat
-import fyi.manpreet.brightstart.ui.components.sound.Sound
-import fyi.manpreet.brightstart.ui.components.vibrate.Vibrate
-import fyi.manpreet.brightstart.ui.components.volume.Volume
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -55,7 +48,10 @@ fun AddAlarm(
 ) {
 
     // TODO Adjust weight accordingly
+    // TODO Increase padding of each component slightly for better clickability
     println("AddAlarmScreen: ${alarm.value}")
+    val alarm = alarm.collectAsStateWithLifecycle()
+    val repeatDays = repeatDays.collectAsStateWithLifecycle()
 
     Column(
         modifier = modifier
@@ -106,63 +102,48 @@ fun AddAlarm(
                 .background(color = Color.DarkGray)
         ) {
 
-            MiddleRow(
-//                modifier = Modifier.weight(0.3f),
-                onVolumeUpdate = onVolumeUpdate,
-                onVibrateUpdate = onVibrateUpdate,
-                onNameUpdate = onNameUpdate,
-                alarm = alarm,
-                repeatDays = repeatDays,
-                onRepeatUpdate = onRepeatUpdate,
-                openRingtonePicker = openRingtonePicker,
-            )
+            // First row
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .background(color = Color.Red)
+            ) {
+                AddAlarmRowOne(
+                    alarm = alarm.value,
+                    openRingtonePicker = openRingtonePicker,
+                    onVolumeUpdate = onVolumeUpdate,
+                    onVibrateUpdate = onVibrateUpdate,
+                )
+            }
 
-            BottomRow(
-                onAddClick = onAddClick,
-                onCloseClick = onCloseClick,
-            )
+            // Second row
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .background(color = Color.Green)
+            ) {
+                AddAlarmRowTwo(
+                    alarm = alarm.value,
+                    repeatDays = repeatDays.value,
+                    onNameUpdate = onNameUpdate,
+                    onRepeatUpdate = onRepeatUpdate,
+                )
+            }
 
-//            // First row
-//            Box(
-//                modifier = Modifier
-//                    .weight(1f)
-//                    .fillMaxWidth()
-//                    .background(color = Color.Red)
-//            ) {
-//                Text(
-//                    text = "Row 1",
-//                    modifier = Modifier.align(Alignment.Center),
-//                    color = Color.White
-//                )
-//            }
-//
-//            // Second row
-//            Box(
-//                modifier = Modifier
-//                    .weight(1f)
-//                    .fillMaxWidth()
-//                    .background(color = Color.Green)
-//            ) {
-//                Text(
-//                    text = "Row 2",
-//                    modifier = Modifier.align(Alignment.Center),
-//                    color = Color.White
-//                )
-//            }
-//
-//            // Third row
-//            Box(
-//                modifier = Modifier
-//                    .weight(1f)
-//                    .fillMaxWidth()
-//                    .background(color = Color.Blue)
-//            ) {
-//                Text(
-//                    text = "Row 3",
-//                    modifier = Modifier.align(Alignment.Center),
-//                    color = Color.White
-//                )
-//            }
+            // Third row
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .background(color = Color.Blue)
+            ) {
+                AddAlarmRowThree(
+                    onAddClick = onAddClick,
+                    onCloseClick = onCloseClick,
+                )
+            }
         }
 
 
@@ -178,111 +159,6 @@ fun TimeSelection(modifier: Modifier = Modifier) {
         Clock(
             modifier = modifier.fillMaxWidth()
         )
-    }
-}
-
-@Composable
-fun MiddleRow(
-    modifier: Modifier = Modifier,
-    alarm: StateFlow<Alarm>,
-    repeatDays: StateFlow<String>,
-    onVolumeUpdate: (AddAlarmEvent) -> Unit,
-    onVibrateUpdate: (AddAlarmEvent) -> Unit,
-    onNameUpdate: (AddAlarmEvent) -> Unit,
-    onRepeatUpdate: (AddAlarmEvent) -> Unit,
-    openRingtonePicker: () -> Unit,
-) {
-
-    val alarm = alarm.collectAsStateWithLifecycle()
-    val repeatDays = repeatDays.collectAsStateWithLifecycle()
-
-    println("Current Alarm MiddleRow: ${alarm.value}")
-
-    Box(
-        modifier = modifier.fillMaxWidth()
-    ) {
-        Column {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Sound(
-                    modifier = Modifier.weight(0.34f),
-                    alarmName = alarm.value.ringtoneName,
-                    openRingtonePicker = openRingtonePicker,
-                )
-                Volume(
-                    modifier = Modifier.weight(0.33f),
-                    onVolumeUpdate = onVolumeUpdate,
-                )
-                Vibrate(
-                    modifier = Modifier.weight(0.33f),
-                    onVibrateUpdate = onVibrateUpdate,
-                )
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Name(
-//                        modifier = Modifier.weight(0.5f), TODO Check
-                    onNameUpdate = onNameUpdate,
-                )
-                Repeat(
-//                        modifier = Modifier.weight(0.5f),
-                    alarmDays = alarm.value.alarmDays,
-                    repeatDays = repeatDays.value,
-                    onRepeatUpdate = onRepeatUpdate,
-                )
-            }
-
-        }
-    }
-}
-
-@Composable
-private fun BottomRow(
-    modifier: Modifier = Modifier,
-    onAddClick: () -> Unit,
-    onCloseClick: () -> Unit,
-) {
-
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-
-        //TODO Maybe take the weight for this row and set size of button based on that
-        // Bottom buttons
-        Box(
-            modifier = Modifier.wrapContentSize(),
-            contentAlignment = Alignment.BottomStart
-        ) {
-            RoundButton(
-                icon = CloseIcon,
-                onClick = onCloseClick
-            )
-        }
-
-        Text(text = "Time left for alarm here") // TODO
-
-        Box(
-            modifier = Modifier.wrapContentSize(),
-            contentAlignment = Alignment.BottomEnd
-        ) {
-            RoundButton(
-                icon = CheckIcon,
-                onClick = onAddClick
-            )
-        }
     }
 }
 
