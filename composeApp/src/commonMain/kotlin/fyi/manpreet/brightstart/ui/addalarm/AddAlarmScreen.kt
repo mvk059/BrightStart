@@ -15,10 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fyi.manpreet.brightstart.data.model.Alarm
+import fyi.manpreet.brightstart.ui.addalarm.items.AddAlarmClockOne
 import fyi.manpreet.brightstart.ui.addalarm.items.AddAlarmRowOne
 import fyi.manpreet.brightstart.ui.addalarm.items.AddAlarmRowThree
 import fyi.manpreet.brightstart.ui.addalarm.items.AddAlarmRowTwo
-import fyi.manpreet.brightstart.ui.components.clock.Clock
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -47,6 +47,7 @@ fun AddAlarm(
     onCloseClick: () -> Unit,
 ) {
 
+    // TODO Add scaffold for app bar?
     // TODO Adjust weight accordingly
     // TODO Increase padding of each component slightly for better clickability
     println("AddAlarmScreen: ${alarm.value}")
@@ -72,11 +73,7 @@ fun AddAlarm(
                     .fillMaxHeight()
                     .background(color = Color.Gray)
             ) {
-                Text(
-                    text = "Left 35%",
-                    modifier = Modifier.align(Alignment.Center),
-                    color = Color.White
-                )
+                AddAlarmClockOne()
             }
 
             // Right half of the 70% section
@@ -147,18 +144,6 @@ fun AddAlarm(
         }
 
 
-    }
-}
-
-@Composable
-fun TimeSelection(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier.fillMaxSize()
-    ) {
-
-        Clock(
-            modifier = modifier.fillMaxWidth()
-        )
     }
 }
 
