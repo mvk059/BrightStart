@@ -45,7 +45,7 @@ fun AlarmRepeatItem(
 
                 Text(
                     modifier = Modifier.padding(horizontal = 0.dp, vertical = 0.dp),
-                    text = "*\n${item.day}",
+                    text = "*\n${item.day.value}",
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     style = TextStyle(

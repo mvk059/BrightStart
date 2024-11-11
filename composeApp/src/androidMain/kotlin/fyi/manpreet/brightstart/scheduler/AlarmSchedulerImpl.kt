@@ -17,7 +17,7 @@ actual class AlarmSchedulerImpl(
     actual override fun schedule(alarm: Alarm) {
         val time = alarm.localTime
         val intent = Intent(context, AlarmReceiver::class.java).apply {
-            putExtra("ALARM_NAME", alarm.name)
+            putExtra("ALARM_NAME", alarm.name.value)
         }
 
         alarmManager.setExactAndAllowWhileIdle(

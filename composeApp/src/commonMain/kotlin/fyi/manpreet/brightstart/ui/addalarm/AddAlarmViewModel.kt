@@ -4,7 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import fyi.manpreet.brightstart.data.model.Alarm
+import fyi.manpreet.brightstart.data.model.AlarmActive
+import fyi.manpreet.brightstart.data.model.AlarmDaySelected
+import fyi.manpreet.brightstart.data.model.AlarmDayTitle
+import fyi.manpreet.brightstart.data.model.AlarmName
+import fyi.manpreet.brightstart.data.model.AlarmTime
 import fyi.manpreet.brightstart.data.model.DaysEnum
+import fyi.manpreet.brightstart.data.model.RingtoneName
+import fyi.manpreet.brightstart.data.model.RingtoneReference
+import fyi.manpreet.brightstart.data.model.VibrationStatus
+import fyi.manpreet.brightstart.data.model.Volume
 import fyi.manpreet.brightstart.data.repository.AlarmRepository
 import fyi.manpreet.brightstart.scheduler.AlarmScheduler
 import fyi.manpreet.brightstart.ui.model.AlarmConstants
@@ -97,48 +106,49 @@ class AddAlarmViewModel(
         Alarm(
             localTime = Clock.System.now().plus(10.seconds)
                 .toLocalDateTime(TimeZone.currentSystemDefault()),
-            time = "",
-            name = "", // TODO Get text from strings or use default while adding alarm
-            ringtoneReference = "",
-            ringtoneName = "",
-            volume = AlarmConstants.VOLUME, // TODO Should set default volume of phone
-            vibrationStatus = AlarmConstants.VIBRATION_STATUS,  // TODO Should set default vibration status of phone
+            time = AlarmTime(""),
+            name = AlarmName(""), // TODO Get text from strings or use default while adding alarm
+            ringtoneReference = RingtoneReference(""),
+            ringtoneName = RingtoneName(""),
+            volume = Volume(AlarmConstants.VOLUME), // TODO Should set default volume of phone
+            vibrationStatus = VibrationStatus(AlarmConstants.VIBRATION_STATUS),  // TODO Should set default vibration status of phone
             alarmDays = initAlarmDays(),
-            isActive = AlarmConstants.IS_ACTIVE,
+            isActive = AlarmActive(AlarmConstants.IS_ACTIVE),
         )
 
     // TODO Get text from strings
     private fun initAlarmDays() =
         buildList {
-            add(Alarm.AlarmDays(id = DaysEnum.MONDAY, day = "Sun", isSelected = false))
-            add(Alarm.AlarmDays(id = DaysEnum.TUESDAY, day = "Mon", isSelected = false))
-            add(Alarm.AlarmDays(id = DaysEnum.WEDNESDAY, day = "Tue", isSelected = false))
-            add(Alarm.AlarmDays(id = DaysEnum.THURSDAY, day = "Wed", isSelected = false))
-            add(Alarm.AlarmDays(id = DaysEnum.FRIDAY, day = "Thu", isSelected = false))
-            add(Alarm.AlarmDays(id = DaysEnum.SATURDAY, day = "Fri", isSelected = false))
-            add(Alarm.AlarmDays(id = DaysEnum.SUNDAY, day = "Sat", isSelected = false))
+            add(Alarm.AlarmDays(id = DaysEnum.MONDAY, day = AlarmDayTitle("Sun"), isSelected = AlarmDaySelected(false)))
+            add(Alarm.AlarmDays(id = DaysEnum.TUESDAY, day = AlarmDayTitle("Mon"), isSelected = AlarmDaySelected(false)))
+            add(Alarm.AlarmDays(id = DaysEnum.WEDNESDAY, day = AlarmDayTitle("Tue"), isSelected = AlarmDaySelected(false)))
+            add(Alarm.AlarmDays(id = DaysEnum.THURSDAY, day = AlarmDayTitle("Wed"), isSelected = AlarmDaySelected(false)))
+            add(Alarm.AlarmDays(id = DaysEnum.FRIDAY, day = AlarmDayTitle("Thu"), isSelected = AlarmDaySelected(false)))
+            add(Alarm.AlarmDays(id = DaysEnum.SATURDAY, day = AlarmDayTitle("Fri"), isSelected = AlarmDaySelected(false)))
+            add(Alarm.AlarmDays(id = DaysEnum.SUNDAY, day = AlarmDayTitle("Sat"), isSelected = AlarmDaySelected(false)))
         }
 
     private fun addAlarm() {
         Logger.d("Alarm addAlarm")
         val currentAlarm = currentAlarm.value
-        val time = currentAlarm.localTime.toString() // TODO Construct time from localTime
+        val time = AlarmTime(currentAlarm.localTime.toString()) // TODO Construct time from localTime
+        val name = AlarmName(currentAlarm.name.value.ifEmpty { AlarmName("New Alarm") }.toString())
         val ringtoneReference = currentAlarm.ringtoneReference
         val ringtoneName = currentAlarm.ringtoneName
 
-        require(ringtoneReference.isNotEmpty()) { "Ringtone Reference is empty" }
-        require(ringtoneName.isNotEmpty()) { "Ringtone Reference is empty" }
+        require(ringtoneReference.value.isNotEmpty()) { "Ringtone Reference is empty" }
+        require(ringtoneName.value.isNotEmpty()) { "Ringtone Reference is empty" }
 
         val alarm = Alarm(
             localTime = currentAlarm.localTime,
             time = time,
-            name = currentAlarm.name.ifEmpty { "New Alarm" }, // TODO Get text from strings
+            name = name, // TODO Get text from strings
             ringtoneReference = ringtoneReference,
             ringtoneName = ringtoneName,
             volume = currentAlarm.volume,
             vibrationStatus = currentAlarm.vibrationStatus,
             alarmDays = currentAlarm.alarmDays,
-            isActive = true,
+            isActive = AlarmActive(true),
         )
 
         Logger.d("Alarm schedule start")
@@ -157,27 +167,27 @@ class AddAlarmViewModel(
 
         currentAlarm.update {
             it.copy(
-                ringtoneReference = ringtoneReference,
-                ringtoneName = ringtoneName
+                ringtoneReference = RingtoneReference(ringtoneReference),
+                ringtoneName = RingtoneName(ringtoneName)
             )
         }
     }
 
     private fun onVolumeUpdate(volume: Int) {
-        currentAlarm.update { it.copy(volume = volume) }
+        currentAlarm.update { it.copy(volume = Volume(volume)) }
     }
 
     private fun onVibrateUpdate(vibrate: Boolean) {
-        currentAlarm.update { it.copy(vibrationStatus = vibrate) }
+        currentAlarm.update { it.copy(vibrationStatus = VibrationStatus(vibrate)) }
     }
 
     private fun onAlarmNameUpdate(name: String) {
-        currentAlarm.update { it.copy(name = name) }
+        currentAlarm.update { it.copy(name = AlarmName(name)) }
     }
 
     private fun onRepeatItemClick(newItem: Alarm.AlarmDays) {
         val alarmDays = currentAlarm.value.alarmDays.map { oldItem ->
-            if (oldItem == newItem) oldItem.copy(isSelected = !oldItem.isSelected)
+            if (oldItem == newItem) oldItem.copy(isSelected = AlarmDaySelected(!oldItem.isSelected.value))
             else oldItem
         }
         currentAlarm.update { it.copy(alarmDays = alarmDays) }

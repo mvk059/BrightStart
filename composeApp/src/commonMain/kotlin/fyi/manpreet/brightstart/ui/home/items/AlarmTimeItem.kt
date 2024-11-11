@@ -32,7 +32,7 @@ fun AlarmTimeItem(
         ) {
 
             Text(
-                text = alarm.time,
+                text = alarm.time.value,
             )
         }
 

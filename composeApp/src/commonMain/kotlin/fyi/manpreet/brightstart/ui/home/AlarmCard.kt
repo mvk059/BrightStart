@@ -47,6 +47,7 @@ fun AlarmCard(
                 onAlarmStatusChange = onAlarmStatusChange,
             )
 
+            // TODO Send only required items
             AlarmTimeItem(
                 alarm = alarm,
             )

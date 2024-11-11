@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import fyi.manpreet.brightstart.data.model.Alarm
+import fyi.manpreet.brightstart.data.model.AlarmActive
 import fyi.manpreet.brightstart.data.repository.AlarmRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -74,7 +75,7 @@ class HomeViewModel(
         viewModelScope.launch {
             val updatedAlarms = alarms.value.map { currentAlarm ->
                 if (alarm == currentAlarm) {
-                    val updatedAlarm = currentAlarm.copy(isActive = status)
+                    val updatedAlarm = currentAlarm.copy(isActive = AlarmActive(status))
                     println("Alarm to toggle: $updatedAlarm")
                     repository.updateAlarm(updatedAlarm)
                     updatedAlarm

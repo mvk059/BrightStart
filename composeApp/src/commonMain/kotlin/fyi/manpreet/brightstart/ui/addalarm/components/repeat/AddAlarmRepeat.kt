@@ -101,7 +101,7 @@ private fun RepeatTileRow(
                     }
                     .weight(1f)
                     .background(
-                        color = if (item.isSelected) Color.Blue else Color.White,
+                        color = if (item.isSelected.value) Color.Blue else Color.White,
                         shape = RoundedCornerShape(8.dp),
                     )
                     .wrapContentWidth()
@@ -110,8 +110,8 @@ private fun RepeatTileRow(
                 Text(
                     modifier = Modifier
                         .padding(horizontal = 4.dp, vertical = 16.dp),
-                    text = item.day,
-                    color = if (item.isSelected) Color.White else Color.Black
+                    text = item.day.value,
+                    color = if (item.isSelected.value) Color.White else Color.Black
                 )
             }
         }

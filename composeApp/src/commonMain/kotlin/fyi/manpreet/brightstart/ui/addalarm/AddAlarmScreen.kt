@@ -99,7 +99,7 @@ fun AddAlarm(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
                 .padding(top = 16.dp),
-            alarmName = alarm.value.name,
+            alarmName = alarm.value.name.value,
             onNameUpdate = onNameUpdate,
         )
 
@@ -108,7 +108,7 @@ fun AddAlarm(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
                 .padding(top = 16.dp),
-            alarmName = alarm.value.ringtoneName,
+            alarmName = alarm.value.ringtoneName.value,
             openRingtonePicker = openRingtonePicker,
         )
 
@@ -117,7 +117,7 @@ fun AddAlarm(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
                 .padding(top = 16.dp),
-            volumeValue = alarm.value.volume,
+            volumeValue = alarm.value.volume.value,
             onVolumeUpdate = onVolumeUpdate,
         )
 
@@ -126,7 +126,7 @@ fun AddAlarm(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
                 .padding(top = 8.dp),
-            vibrationStatus = alarm.value.vibrationStatus,
+            vibrationStatus = alarm.value.vibrationStatus.value,
             onVibrateUpdate = onVibrateUpdate,
         )
     }

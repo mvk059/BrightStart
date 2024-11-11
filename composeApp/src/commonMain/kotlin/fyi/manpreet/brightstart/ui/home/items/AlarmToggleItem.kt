@@ -34,11 +34,11 @@ fun AlarmToggleRowItem(
     ) {
 
         Text(
-            text = alarm.name,
+            text = alarm.name.value,
         )
 
         Switch(
-            checked = alarm.isActive,
+            checked = alarm.isActive.value,
             onCheckedChange = { onAlarmStatusChange(HomeEvent.ToggleAlarm(alarm, it)) },
             modifier = Modifier.padding(start = 0.dp),
         )
