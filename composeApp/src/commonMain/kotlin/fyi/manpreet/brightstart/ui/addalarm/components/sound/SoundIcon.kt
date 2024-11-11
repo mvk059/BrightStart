@@ -1,4 +1,4 @@
-package fyi.manpreet.brightstart.ui.components.sound
+package fyi.manpreet.brightstart.ui.addalarm.components.sound
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathFillType

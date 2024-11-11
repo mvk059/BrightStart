@@ -1,18 +1,26 @@
 package fyi.manpreet.brightstart.ui.addalarm
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fyi.manpreet.brightstart.data.model.Alarm
+import fyi.manpreet.brightstart.ui.addalarm.components.name.Name
+import fyi.manpreet.brightstart.ui.addalarm.components.repeat.AllAlarmRepeat
+import fyi.manpreet.brightstart.ui.addalarm.components.sound.Sound
+import fyi.manpreet.brightstart.ui.addalarm.components.vibrate.Vibrate
+import fyi.manpreet.brightstart.ui.addalarm.components.volume.Volume
+import fyi.manpreet.brightstart.ui.addalarm.components.toprow.AddAlarmTopRow
 import fyi.manpreet.brightstart.ui.components.clock.TimePicker
 import fyi.manpreet.brightstart.ui.model.AlarmTimeSelector
 import kotlinx.coroutines.flow.StateFlow
@@ -60,94 +68,67 @@ fun AddAlarm(
         modifier = modifier
             .fillMaxSize()
             .background(color = Color(0xFFf5f5f5))
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
 
-        // 70% of the screen
-        Row(
+        AddAlarmTopRow(
+            onSaveClick = onAddClick,
+            onCloseClick = onCloseClick,
+        )
+
+        TimePicker(
+            alarmTimeSelector = alarmTimeSelector.value,
+            onHourIndexUpdate = onHourIndexUpdate,
+            onMinuteIndexUpdate = onMinuteIndexUpdate,
+            onTimePeriodIndexUpdate = onTimePeriodIndexUpdate,
+            onTimeScrollingUpdate = onTimeScrollingUpdate,
+        )
+
+        AllAlarmRepeat(
             modifier = Modifier
-                .weight(0.7f)
                 .fillMaxWidth()
-        ) {
-            // Left half of the 70% section
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-//                    .background(color = Color.Gray)
-            ) {
-                TimePicker(
-                    alarmTimeSelector = alarmTimeSelector.value,
-                    onHourIndexUpdate = onHourIndexUpdate,
-                    onMinuteIndexUpdate = onMinuteIndexUpdate,
-                    onTimePeriodIndexUpdate = onTimePeriodIndexUpdate,
-                    onTimeScrollingUpdate = onTimeScrollingUpdate,
-                )
-            }
+                .padding(horizontal = 8.dp),
+            alarmDays = alarm.value.alarmDays,
+            repeatTitle = repeatDays.value,
+            onRepeatUpdate = onRepeatUpdate,
+        )
 
-            // Right half of the 70% section
-//            Box(
-//                modifier = Modifier
-//                    .weight(1f)
-//                    .fillMaxHeight()
-////                    .background(color = Color.LightGray)
-//            ) {
-//                AddAlarmClockTwo()
-//            }
-        }
-
-        // 30% of the screen
-        Column(
+        Name(
             modifier = Modifier
-                .weight(0.3f)
                 .fillMaxWidth()
-                .background(color = Color.DarkGray)
-        ) {
+                .padding(horizontal = 16.dp)
+                .padding(top = 16.dp),
+            alarmName = alarm.value.name,
+            onNameUpdate = onNameUpdate,
+        )
 
-            // First row
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .background(color = Color.Red)
-            ) {
-//                AddAlarmRowOne(
-//                    alarm = alarm.value,
-//                    openRingtonePicker = openRingtonePicker,
-//                    onVolumeUpdate = onVolumeUpdate,
-//                    onVibrateUpdate = onVibrateUpdate,
-//                )
-            }
+        Sound(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .padding(top = 16.dp),
+            alarmName = alarm.value.ringtoneName,
+            openRingtonePicker = openRingtonePicker,
+        )
 
-            // Second row
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .background(color = Color.Green)
-            ) {
-//                AddAlarmRowTwo(
-//                    alarm = alarm.value,
-//                    repeatDays = repeatDays.value,
-//                    onNameUpdate = onNameUpdate,
-//                    onRepeatUpdate = onRepeatUpdate,
-//                )
-            }
+        Volume(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .padding(top = 16.dp),
+            volumeValue = alarm.value.volume,
+            onVolumeUpdate = onVolumeUpdate,
+        )
 
-            // Third row
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .background(color = Color.Blue)
-            ) {
-//                AddAlarmRowThree(
-//                    onAddClick = onAddClick,
-//                    onCloseClick = onCloseClick,
-//                )
-            }
-        }
-
-
+        Vibrate(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .padding(top = 8.dp),
+            vibrationStatus = alarm.value.vibrationStatus,
+            onVibrateUpdate = onVibrateUpdate,
+        )
     }
 }
 

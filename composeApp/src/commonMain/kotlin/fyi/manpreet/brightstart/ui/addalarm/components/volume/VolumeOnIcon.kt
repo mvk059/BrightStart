@@ -1,4 +1,4 @@
-package fyi.manpreet.brightstart.ui.components.volume
+package fyi.manpreet.brightstart.ui.addalarm.components.volume
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathFillType

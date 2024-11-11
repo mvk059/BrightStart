@@ -1,10 +1,8 @@
-package fyi.manpreet.brightstart.ui.components.sound
+package fyi.manpreet.brightstart.ui.addalarm.components.sound
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import brightstart.composeapp.generated.resources.Res
 import brightstart.composeapp.generated.resources.add_alarm_sound
 import org.jetbrains.compose.resources.stringResource
@@ -39,9 +36,8 @@ fun Sound(
     }
 
     SoundContent(
-        modifier = modifier,
+        modifier = modifier.clickable { openRingtonePicker() },
         selectedSound = selectedSound,
-        openRingtonePicker = openRingtonePicker,
     )
 }
 
@@ -49,43 +45,34 @@ fun Sound(
 private fun SoundContent(
     modifier: Modifier = Modifier,
     selectedSound: String,
-    openRingtonePicker: () -> Unit,
 ) {
 
-    Box(modifier = modifier) {
 
-        Column(
-            modifier = Modifier.align(Alignment.Center).clickable { openRingtonePicker() },
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            // TODO Set tint to grey on disable and white/remove to enable
-            Icon(
-                imageVector = SoundIcon,
-                contentDescription = null,
-                tint = Color.White,
-            )
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
 
-            Text(
-                text = stringResource(Res.string.add_alarm_sound),
-                style = MaterialTheme.typography.titleMedium,
-                color = Color.White,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+        Text(
+            text = stringResource(Res.string.add_alarm_sound),
+            style = MaterialTheme.typography.titleMedium,
+            color = Color.Black,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
 
-            Text(
-                text = selectedSound,
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.LightGray,
-            )
-        }
+        Text(
+            text = selectedSound,
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.DarkGray,
+        )
     }
 }
 
 @Composable
 @Preview
-fun VibratePreview() {
+fun SoundPreview() {
     MaterialTheme {
 
 //        Sound()

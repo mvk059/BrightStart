@@ -1,4 +1,4 @@
-package fyi.manpreet.brightstart.ui.components.vibrate
+package fyi.manpreet.brightstart.ui.addalarm.components.vibrate
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathFillType
@@ -9,13 +9,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 
-val VibrateOffIcon: ImageVector
+val VibrateOnIcon: ImageVector
     get() {
-        if (VibrateOff != null) {
-            return VibrateOff!!
+        if (Vibrate != null) {
+            return Vibrate!!
         }
-        VibrateOff = ImageVector.Builder(
-            name = "VibrateOff",
+        Vibrate = ImageVector.Builder(
+            name = "Vibrate",
             defaultWidth = 24.dp,
             defaultHeight = 24.dp,
             viewportWidth = 24f,
@@ -66,45 +66,19 @@ val VibrateOffIcon: ImageVector
                 strokeLineMiter = 1.0f,
                 pathFillType = PathFillType.NonZero
             ) {
-                moveTo(8f, 8f)
-                verticalLineToRelative(10f)
-                curveToRelative(0f, 0.55f, 0.45f, 1f, 1f, 1f)
-                horizontalLineToRelative(6f)
-                curveToRelative(0.55f, 0f, 1f, -0.45f, 1f, -1f)
-                verticalLineToRelative(-2f)
-            }
-            path(
-                fill = null,
-                fillAlpha = 1.0f,
-                stroke = SolidColor(Color(0xFF000000)),
-                strokeAlpha = 1.0f,
-                strokeLineWidth = 2f,
-                strokeLineCap = StrokeCap.Round,
-                strokeLineJoin = StrokeJoin.Round,
-                strokeLineMiter = 1.0f,
-                pathFillType = PathFillType.NonZero
-            ) {
-                moveTo(16f, 10.34f)
+                moveTo(9f, 5f)
+                horizontalLineTo(15f)
+                arcTo(1f, 1f, 0f, isMoreThanHalf = false, isPositiveArc = true, 16f, 6f)
+                verticalLineTo(18f)
+                arcTo(1f, 1f, 0f, isMoreThanHalf = false, isPositiveArc = true, 15f, 19f)
+                horizontalLineTo(9f)
+                arcTo(1f, 1f, 0f, isMoreThanHalf = false, isPositiveArc = true, 8f, 18f)
                 verticalLineTo(6f)
-                curveToRelative(0f, -0.55f, -0.45f, -1f, -1f, -1f)
-                horizontalLineToRelative(-4.34f)
-            }
-            path(
-                fill = null,
-                fillAlpha = 1.0f,
-                stroke = SolidColor(Color(0xFF000000)),
-                strokeAlpha = 1.0f,
-                strokeLineWidth = 2f,
-                strokeLineCap = StrokeCap.Round,
-                strokeLineJoin = StrokeJoin.Round,
-                strokeLineMiter = 1.0f,
-                pathFillType = PathFillType.NonZero
-            ) {
-                moveTo(2f, 2f)
-                lineTo(22f, 22f)
+                arcTo(1f, 1f, 0f, isMoreThanHalf = false, isPositiveArc = true, 9f, 5f)
+                close()
             }
         }.build()
-        return VibrateOff!!
+        return Vibrate!!
     }
 
-private var VibrateOff: ImageVector? = null
+private var Vibrate: ImageVector? = null
