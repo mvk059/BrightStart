@@ -8,6 +8,10 @@ import fyi.manpreet.brightstart.data.model.DaysEnum
 import fyi.manpreet.brightstart.data.repository.AlarmRepository
 import fyi.manpreet.brightstart.scheduler.AlarmScheduler
 import fyi.manpreet.brightstart.ui.model.AlarmConstants
+import fyi.manpreet.brightstart.ui.model.AlarmTimeSelector
+import fyi.manpreet.brightstart.ui.model.Hour
+import fyi.manpreet.brightstart.ui.model.Minute
+import fyi.manpreet.brightstart.ui.model.TimePeriod
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -24,6 +28,9 @@ class AddAlarmViewModel(
 
     val currentAlarm: StateFlow<Alarm>
         field = MutableStateFlow(initCurrentAlarm())
+
+    val timeSelector: StateFlow<AlarmTimeSelector>
+        field  = MutableStateFlow(AlarmTimeSelector())
 
     val repeatDays: StateFlow<String>
         field = MutableStateFlow("")
@@ -48,6 +55,44 @@ class AddAlarmViewModel(
         }
     }
 
+    fun onHourIndexUpdate(hour: Int) {
+        timeSelector.update { it.copy(selectedHourIndex = hour) }
+    }
+
+    fun onMinuteIndexUpdate(minute: Int) {
+        timeSelector.update { it.copy(selectedMinuteIndex = minute) }
+    }
+
+    fun onTimePeriodIndexUpdate(timePeriod: Int) {
+        timeSelector.update { it.copy(selectedTimePeriodIndex = timePeriod) }
+    }
+
+    fun onTimeScrollingUpdate() {
+        val hour = timeSelector.value.hours[timeSelector.value.selectedHourIndex]
+        // TODO Handle for 24 hours
+        val minutes = timeSelector.value.minutes[timeSelector.value.selectedMinuteIndex]
+        timeSelector.update {
+            it.copy(
+                selectedTime = AlarmTimeSelector.AlarmSelectedTime(
+                    hour = hour,
+                    minute = minutes,
+                )
+            )
+        }
+
+//        val time = timeSelector.value?.let {
+//            var hour = it.hours[it.selectedHourIndex].toInt()
+//            if (!it.is24Hour) {
+//                hour = hour % 12 + if (it.selectedTimeOfDayIndex == 1) 12 else 0
+//            }
+//            TimePickerTime(
+//                hour,
+//                it.minutes[it.selectedMinuteIndex].toInt()
+//            )
+//        }
+//        return time
+    }
+
     private fun initCurrentAlarm() =
         Alarm(
             localTime = Clock.System.now().plus(10.seconds)
@@ -56,8 +101,8 @@ class AddAlarmViewModel(
             name = "", // TODO Get text from strings or use default while adding alarm
             ringtoneReference = "",
             ringtoneName = "",
-            volume = AlarmConstants.VOLUME,
-            vibrationStatus = AlarmConstants.VIBRATION_STATUS,
+            volume = AlarmConstants.VOLUME, // TODO Should set default volume of phone
+            vibrationStatus = AlarmConstants.VIBRATION_STATUS,  // TODO Should set default vibration status of phone
             alarmDays = initAlarmDays(),
             isActive = AlarmConstants.IS_ACTIVE,
         )
@@ -108,6 +153,7 @@ class AddAlarmViewModel(
         val ringtoneName = data.second
         requireNotNull(ringtoneReference) { "Ringtone Reference is null" }
         requireNotNull(ringtoneName) { "Ringtone Name is null" }
+        // TODO Handle ringtone being null when cancelled
 
         currentAlarm.update {
             it.copy(

@@ -8,17 +8,13 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fyi.manpreet.brightstart.data.model.Alarm
-import fyi.manpreet.brightstart.ui.addalarm.items.AddAlarmClockOne
-import fyi.manpreet.brightstart.ui.addalarm.items.AddAlarmRowOne
-import fyi.manpreet.brightstart.ui.addalarm.items.AddAlarmRowThree
-import fyi.manpreet.brightstart.ui.addalarm.items.AddAlarmRowTwo
+import fyi.manpreet.brightstart.ui.components.clock.TimePicker
+import fyi.manpreet.brightstart.ui.model.AlarmTimeSelector
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -37,6 +33,11 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun AddAlarm(
     modifier: Modifier = Modifier,
     alarm: StateFlow<Alarm>,
+    alarmTimeSelector: StateFlow<AlarmTimeSelector>,
+    onHourIndexUpdate: (Int) -> Unit,
+    onMinuteIndexUpdate: (Int) -> Unit,
+    onTimePeriodIndexUpdate: (Int) -> Unit,
+    onTimeScrollingUpdate: () -> Unit,
     repeatDays: StateFlow<String>,
     onVolumeUpdate: (AddAlarmEvent) -> Unit,
     onVibrateUpdate: (AddAlarmEvent) -> Unit,
@@ -53,11 +54,12 @@ fun AddAlarm(
     println("AddAlarmScreen: ${alarm.value}")
     val alarm = alarm.collectAsStateWithLifecycle()
     val repeatDays = repeatDays.collectAsStateWithLifecycle()
+    val alarmTimeSelector = alarmTimeSelector.collectAsStateWithLifecycle()
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = Color(0xFF1E1E26))
+            .background(color = Color(0xFFf5f5f5))
     ) {
 
         // 70% of the screen
@@ -71,24 +73,26 @@ fun AddAlarm(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
-                    .background(color = Color.Gray)
+//                    .background(color = Color.Gray)
             ) {
-                AddAlarmClockOne()
+                TimePicker(
+                    alarmTimeSelector = alarmTimeSelector.value,
+                    onHourIndexUpdate = onHourIndexUpdate,
+                    onMinuteIndexUpdate = onMinuteIndexUpdate,
+                    onTimePeriodIndexUpdate = onTimePeriodIndexUpdate,
+                    onTimeScrollingUpdate = onTimeScrollingUpdate,
+                )
             }
 
             // Right half of the 70% section
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .background(color = Color.LightGray)
-            ) {
-                Text(
-                    text = "Right 35%",
-                    modifier = Modifier.align(Alignment.Center),
-                    color = Color.Black
-                )
-            }
+//            Box(
+//                modifier = Modifier
+//                    .weight(1f)
+//                    .fillMaxHeight()
+////                    .background(color = Color.LightGray)
+//            ) {
+//                AddAlarmClockTwo()
+//            }
         }
 
         // 30% of the screen
@@ -106,12 +110,12 @@ fun AddAlarm(
                     .fillMaxWidth()
                     .background(color = Color.Red)
             ) {
-                AddAlarmRowOne(
-                    alarm = alarm.value,
-                    openRingtonePicker = openRingtonePicker,
-                    onVolumeUpdate = onVolumeUpdate,
-                    onVibrateUpdate = onVibrateUpdate,
-                )
+//                AddAlarmRowOne(
+//                    alarm = alarm.value,
+//                    openRingtonePicker = openRingtonePicker,
+//                    onVolumeUpdate = onVolumeUpdate,
+//                    onVibrateUpdate = onVibrateUpdate,
+//                )
             }
 
             // Second row
@@ -121,12 +125,12 @@ fun AddAlarm(
                     .fillMaxWidth()
                     .background(color = Color.Green)
             ) {
-                AddAlarmRowTwo(
-                    alarm = alarm.value,
-                    repeatDays = repeatDays.value,
-                    onNameUpdate = onNameUpdate,
-                    onRepeatUpdate = onRepeatUpdate,
-                )
+//                AddAlarmRowTwo(
+//                    alarm = alarm.value,
+//                    repeatDays = repeatDays.value,
+//                    onNameUpdate = onNameUpdate,
+//                    onRepeatUpdate = onRepeatUpdate,
+//                )
             }
 
             // Third row
@@ -136,10 +140,10 @@ fun AddAlarm(
                     .fillMaxWidth()
                     .background(color = Color.Blue)
             ) {
-                AddAlarmRowThree(
-                    onAddClick = onAddClick,
-                    onCloseClick = onCloseClick,
-                )
+//                AddAlarmRowThree(
+//                    onAddClick = onAddClick,
+//                    onCloseClick = onCloseClick,
+//                )
             }
         }
 
