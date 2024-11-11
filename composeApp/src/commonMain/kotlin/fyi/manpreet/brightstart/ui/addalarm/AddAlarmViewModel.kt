@@ -18,9 +18,6 @@ import fyi.manpreet.brightstart.data.repository.AlarmRepository
 import fyi.manpreet.brightstart.scheduler.AlarmScheduler
 import fyi.manpreet.brightstart.ui.model.AlarmConstants
 import fyi.manpreet.brightstart.ui.model.AlarmTimeSelector
-import fyi.manpreet.brightstart.ui.model.Hour
-import fyi.manpreet.brightstart.ui.model.Minute
-import fyi.manpreet.brightstart.ui.model.TimePeriod
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -39,7 +36,7 @@ class AddAlarmViewModel(
         field = MutableStateFlow(initCurrentAlarm())
 
     val timeSelector: StateFlow<AlarmTimeSelector>
-        field  = MutableStateFlow(AlarmTimeSelector())
+        field = MutableStateFlow(AlarmTimeSelector())
 
     val repeatDays: StateFlow<String>
         field = MutableStateFlow("")
@@ -119,19 +116,62 @@ class AddAlarmViewModel(
     // TODO Get text from strings
     private fun initAlarmDays() =
         buildList {
-            add(Alarm.AlarmDays(id = DaysEnum.MONDAY, day = AlarmDayTitle("Sun"), isSelected = AlarmDaySelected(false)))
-            add(Alarm.AlarmDays(id = DaysEnum.TUESDAY, day = AlarmDayTitle("Mon"), isSelected = AlarmDaySelected(false)))
-            add(Alarm.AlarmDays(id = DaysEnum.WEDNESDAY, day = AlarmDayTitle("Tue"), isSelected = AlarmDaySelected(false)))
-            add(Alarm.AlarmDays(id = DaysEnum.THURSDAY, day = AlarmDayTitle("Wed"), isSelected = AlarmDaySelected(false)))
-            add(Alarm.AlarmDays(id = DaysEnum.FRIDAY, day = AlarmDayTitle("Thu"), isSelected = AlarmDaySelected(false)))
-            add(Alarm.AlarmDays(id = DaysEnum.SATURDAY, day = AlarmDayTitle("Fri"), isSelected = AlarmDaySelected(false)))
-            add(Alarm.AlarmDays(id = DaysEnum.SUNDAY, day = AlarmDayTitle("Sat"), isSelected = AlarmDaySelected(false)))
+            add(
+                Alarm.AlarmDays(
+                    id = DaysEnum.MONDAY,
+                    day = AlarmDayTitle("Sun"),
+                    isSelected = AlarmDaySelected(false)
+                )
+            )
+            add(
+                Alarm.AlarmDays(
+                    id = DaysEnum.TUESDAY,
+                    day = AlarmDayTitle("Mon"),
+                    isSelected = AlarmDaySelected(false)
+                )
+            )
+            add(
+                Alarm.AlarmDays(
+                    id = DaysEnum.WEDNESDAY,
+                    day = AlarmDayTitle("Tue"),
+                    isSelected = AlarmDaySelected(false)
+                )
+            )
+            add(
+                Alarm.AlarmDays(
+                    id = DaysEnum.THURSDAY,
+                    day = AlarmDayTitle("Wed"),
+                    isSelected = AlarmDaySelected(false)
+                )
+            )
+            add(
+                Alarm.AlarmDays(
+                    id = DaysEnum.FRIDAY,
+                    day = AlarmDayTitle("Thu"),
+                    isSelected = AlarmDaySelected(false)
+                )
+            )
+            add(
+                Alarm.AlarmDays(
+                    id = DaysEnum.SATURDAY,
+                    day = AlarmDayTitle("Fri"),
+                    isSelected = AlarmDaySelected(false)
+                )
+            )
+            add(
+                Alarm.AlarmDays(
+                    id = DaysEnum.SUNDAY,
+                    day = AlarmDayTitle("Sat"),
+                    isSelected = AlarmDaySelected(false)
+                )
+            )
         }
 
     private fun addAlarm() {
         Logger.d("Alarm addAlarm")
         val currentAlarm = currentAlarm.value
-        val time = AlarmTime(currentAlarm.localTime.toString()) // TODO Construct time from localTime
+        val time =
+            AlarmTime(currentAlarm.localTime.toString()) // TODO Construct time from localTime
         val name = AlarmName(currentAlarm.name.value.ifEmpty { AlarmName("New Alarm") }.toString())
         val ringtoneReference = currentAlarm.ringtoneReference
         val ringtoneName = currentAlarm.ringtoneName
@@ -140,7 +180,8 @@ class AddAlarmViewModel(
         require(ringtoneName.value.isNotEmpty()) { "Ringtone Reference is empty" }
 
         val alarm = Alarm(
-            localTime = currentAlarm.localTime,
+            localTime = Clock.System.now().plus(10.seconds)
+                .toLocalDateTime(TimeZone.currentSystemDefault()),
             time = time,
             name = name, // TODO Get text from strings
             ringtoneReference = ringtoneReference,
@@ -153,8 +194,9 @@ class AddAlarmViewModel(
 
         Logger.d("Alarm schedule start")
         viewModelScope.launch {
-            alarmScheduler.schedule(alarm)
-            repository.insertAlarm(alarm)
+            val id = repository.insertAlarm(alarm)
+            println("Add Alarm id: $id")
+            alarmScheduler.schedule(alarm.copy(id = id))
         }
     }
 
