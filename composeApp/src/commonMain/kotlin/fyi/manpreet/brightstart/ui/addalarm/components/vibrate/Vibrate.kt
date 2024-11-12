@@ -56,7 +56,7 @@ private fun VibrateContent(
 
         Text(
             text = stringResource(Res.string.add_alarm_vibrate),
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.labelLarge,
             color = Color.Black,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

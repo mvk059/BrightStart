@@ -56,7 +56,7 @@ private fun SoundContent(
 
         Text(
             text = stringResource(Res.string.add_alarm_sound),
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.labelLarge,
             color = Color.Black,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -64,7 +64,7 @@ private fun SoundContent(
 
         Text(
             text = selectedSound,
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodyMedium,
             color = Color.DarkGray,
         )
     }

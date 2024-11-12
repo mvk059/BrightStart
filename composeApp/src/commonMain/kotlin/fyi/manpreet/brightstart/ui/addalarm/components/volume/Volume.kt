@@ -65,7 +65,7 @@ private fun VolumeTitleRow(
 
         Text(
             text = stringResource(Res.string.add_alarm_volume),
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.labelLarge,
             color = Color.Black,
         )
 

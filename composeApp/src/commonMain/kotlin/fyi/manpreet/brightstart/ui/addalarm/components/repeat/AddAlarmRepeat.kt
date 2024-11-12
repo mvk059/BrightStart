@@ -67,7 +67,7 @@ private fun RepeatTitleRow(
 
         Text(
             text = stringResource(Res.string.add_alarm_repeat),
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.labelLarge,
             color = Color.Black,
         )
 
@@ -111,7 +111,8 @@ private fun RepeatTileRow(
                     modifier = Modifier
                         .padding(horizontal = 4.dp, vertical = 16.dp),
                     text = item.day.value,
-                    color = if (item.isSelected.value) Color.White else Color.Black
+                    color = if (item.isSelected.value) Color.White else Color.Black,
+                    style = MaterialTheme.typography.bodyMedium,
                 )
             }
         }
