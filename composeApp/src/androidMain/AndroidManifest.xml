@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
 
     <application
@@ -29,6 +30,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".AlarmTriggerActivity"
+            android:exported="true"
+            android:launchMode="singleTop" />
         <receiver
             android:name=".scheduler.AlarmReceiver"
             android:exported="true">
@@ -36,6 +40,7 @@
                 <action android:name="fyi.manpreet.brightstart.ALARM_TRIGGER" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".scheduler.AlarmNotificationReceiver" />
     </application>
 
 </manifest>

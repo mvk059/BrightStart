@@ -1,6 +1,5 @@
 package fyi.manpreet.brightstart
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
@@ -33,13 +32,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         installSplashScreen()
-
         setContent {
 
             val ringtoneState = sharedViewModel.ringtonePickerState.collectAsStateWithLifecycle()
 
             LaunchedEffect(ringtoneState.value) {
-                println("LaunchedEffect Ringtone state: $ringtoneState")
                 if (ringtoneState.value)
                     launchRingtoneActivity()
                 if (sharedViewModel.ringtonePickerData.value == null) {
@@ -49,32 +46,10 @@ class MainActivity : ComponentActivity() {
             }
 
             App()
-
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .background(Color(0xFF1e1e26))
-//            ) {
-//                Weight(modifier = Modifier.fillMaxSize()) { println(it) }
-//            }
-
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .background(Color(0xFF1e1e26)),
-//                contentAlignment = Alignment.Center
-//            ) {
-////                Clock(modifier = Modifier.fillMaxSize())
-//                NewCircle(modifier = Modifier.fillMaxSize())
-////                MuneerCircularProgressBar {
-////                    println(it)
-////                }
-//            }
         }
     }
 
     fun launchRingtoneActivity() {
-        println("launchRingtoneActivity")
         ringtoneContract.launch(RingtoneManager.TYPE_RINGTONE)
     }
 
@@ -97,7 +72,7 @@ class MainActivity : ComponentActivity() {
             }
 
         override fun parseResult(resultCode: Int, result: Intent?): Pair<Uri?, String?>? {
-            if (resultCode != Activity.RESULT_OK) return null
+            if (resultCode != RESULT_OK) return null
 
             val uri = result?.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
             val ringtoneName = uri?.let {
@@ -107,7 +82,6 @@ class MainActivity : ComponentActivity() {
             return Pair(uri, ringtoneName)
         }
     }
-
 }
 
 @Preview

@@ -2,72 +2,94 @@ package fyi.manpreet.brightstart.scheduler
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.core.app.NotificationCompat
+import fyi.manpreet.brightstart.AlarmTriggerActivity
+import fyi.manpreet.brightstart.scheduler.AlarmConstants.ALARM_ID
+import fyi.manpreet.brightstart.scheduler.AlarmConstants.CHANNEL_NAME
+import fyi.manpreet.brightstart.scheduler.AlarmConstants.CLOSE_ACTION
+import fyi.manpreet.brightstart.scheduler.AlarmConstants.DISMISS_ACTION
+import fyi.manpreet.brightstart.scheduler.AlarmConstants.FULL_SCREEN
+import fyi.manpreet.brightstart.scheduler.AlarmConstants.PENDING_INTENT_FLAGS
+import fyi.manpreet.brightstart.scheduler.AlarmConstants.SNOOZE_ACTION
+import org.koin.core.component.KoinComponent
 
 // TODO RECEIVE_BOOT_COMPLETED permission
-class AlarmReceiver() : BroadcastReceiver() {
-
-    // Inject things here
-//    private val sharedViewModel: HomeViewModel by viewModel()
-//    private val alarmTrigger: AlarmTrigger by inject(AlarmTrigger::class.java)
+class AlarmReceiver() : BroadcastReceiver(), KoinComponent {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         // Callback when alarm is triggered
         val alarmId = intent?.getLongExtra("ALARM_ID", 0L) ?: return
         val alarmName = intent?.getStringExtra("ALARM_NAME") ?: return
         val ringtoneReference = intent?.getStringExtra("RINGTONE_REF") ?: return
-        val ringtoneName = intent?.getStringExtra("RINGTONE_NAME") ?: return
         println("Alarm triggered: $alarmId, $alarmName")
-
-//        context?.let {
-//            println("Inside onReceive Context: $alarmId, $alarmName")
-//            // Create an Intent to launch your app's AlarmTriggerActivity (or the desired activity)
-//            val launchIntent = Intent(it, AlarmTriggerActivity::class.java).apply {
-//                putExtra("ALARM_ID", alarmId)
-//                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-//            }
-//            // Start the activity
-//            it.startActivity(launchIntent)
-//        }
 
         // Create the notification channel (required for Android 8.0 and above)
         val notificationManager = context?.getSystemService(NotificationManager::class.java)!!
-        createNotificationChannel(notificationManager)
 
-//        val alarmSound = Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.your_alarm_sound);
-//        val  ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        val ringtoneUri = Uri.parse(ringtoneReference.substringBefore("?"))
-        println("Ringtone Ref: , $ringtoneUri")
+        // Delete notification channels before creating a new one to avoid multiple channels in settings
+        notificationManager.notificationChannels.forEach {
+            notificationManager.deleteNotificationChannel(it.id)
+        }
 
+        val channel = NotificationChannel(
+            ringtoneReference,
+            CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = "BrightStartChannel channel description"
+            setSound(Uri.parse(ringtoneReference), null)
+        }
+        notificationManager.createNotificationChannel(channel)
+
+        val fullScreenIntent = Intent(context, AlarmTriggerActivity::class.java).apply {
+            putExtra(FULL_SCREEN, true)
+            putExtra(ALARM_ID, alarmId.toInt())
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val fullScreenPendingIntent =
+            PendingIntent.getActivity(context, 0, fullScreenIntent, PENDING_INTENT_FLAGS)
+
+        val snoozeIntent = Intent(context, AlarmNotificationReceiver::class.java).apply {
+            action = SNOOZE_ACTION
+            putExtra(ALARM_ID, alarmId.toInt())
+        }
+        val snoozePendingIntent =
+            PendingIntent.getBroadcast(context, 0, snoozeIntent, PENDING_INTENT_FLAGS)
+
+        val closeIntent = Intent(context, AlarmNotificationReceiver::class.java).apply {
+            action = CLOSE_ACTION
+            putExtra(ALARM_ID, alarmId.toInt())
+        }
+        val closePendingIntent =
+            PendingIntent.getBroadcast(context, 0, closeIntent, PENDING_INTENT_FLAGS)
+
+        val dismissIntent = Intent(context, AlarmNotificationReceiver::class.java).apply {
+            action = DISMISS_ACTION
+            putExtra(ALARM_ID, alarmId.toInt())
+        }
+        val dismissPendingIntent =
+            PendingIntent.getBroadcast(context, 0, dismissIntent, PENDING_INTENT_FLAGS)
 
         // Build the notification
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+        val notification = NotificationCompat.Builder(context, ringtoneReference)
             .setSmallIcon(android.R.drawable.ic_menu_add)
             .setContentTitle(alarmName)
-            .setContentText("Time to wake up!")
-            .setSound(ringtoneUri)
+//            .setContentText("Time to wake up!")
+//            .setSound(Uri.parse("content://media/external_primary/audio/media/1000000020"))
             .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setFullScreenIntent(fullScreenPendingIntent, true)
+            .addAction(-1, "Snooze", snoozePendingIntent) // TODO Get from strings
+            .addAction(-1, "Close", closePendingIntent)
+            .setDeleteIntent(dismissPendingIntent)
             .build()
 
         // Show the notification
         notificationManager.notify(alarmId.toInt(), notification)
-    }
-
-    private fun createNotificationChannel(notificationManager: NotificationManager) {
-        val channel = NotificationChannel(
-            CHANNEL_ID,
-            "Alarm Notifications",
-            NotificationManager.IMPORTANCE_HIGH
-        )
-        notificationManager.createNotificationChannel(channel)
-
-    }
-
-    companion object {
-        private const val CHANNEL_ID = "alarm_channel"
+        // Pass the id to the broadcast and cancel it there
     }
 }

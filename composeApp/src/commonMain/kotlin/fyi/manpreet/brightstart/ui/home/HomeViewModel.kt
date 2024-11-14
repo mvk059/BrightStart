@@ -6,10 +6,14 @@ import co.touchlab.kermit.Logger
 import fyi.manpreet.brightstart.data.model.Alarm
 import fyi.manpreet.brightstart.data.model.AlarmActive
 import fyi.manpreet.brightstart.data.repository.AlarmRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -29,6 +33,39 @@ class HomeViewModel(
 
     val ringtonePickerData: StateFlow<Pair<String?, String?>?>
         field = MutableStateFlow(null)
+
+    val alarmTriggerState: StateFlow<Alarm?>
+        field = MutableStateFlow(null)
+
+    fun onAlarmTrigger(id: Long) {
+        if (id == -1L) {
+            println("invalid alarm")
+            return
+        }
+        println("VM Alarm triggered: $id")
+
+        println("VM Alarm2 ${viewModelScope.isActive}")
+         CoroutineScope(Dispatchers.IO).launch {
+             println("VM Inside launch")
+//            delay(1000.milliseconds)
+//            val alarm = repository.fetchAlarmById(id)
+             val alarm = repository.fetchAlarmById(id)
+             println("Alarm to trigger: $alarm")
+             alarmTriggerState.update { alarm }
+        }
+//        viewModelScope.launch {
+//            println("VM Inside launch")
+////            delay(1000.milliseconds)
+////            val alarm = repository.fetchAlarmById(id)
+//            val alarm = repository.fetchAlarmById(id)
+//            println("Alarm to trigger: $alarm")
+//            alarmTriggerState.update { alarm }
+//        }
+    }
+
+    fun resetAlarmTriggerState() {
+        alarmTriggerState.update { null }
+    }
 
     fun updateRingtoneState(state: Boolean) {
         println("Ringtone state: $state")
@@ -69,6 +106,15 @@ class HomeViewModel(
 
             is HomeEvent.ToggleAlarm -> toggleAlarm(event.alarm, event.status)
         }
+    }
+
+    fun onStopAlarm(alarm: Alarm) {
+        println("Stop alarm")
+        resetAlarmTriggerState()
+    }
+
+    fun onSnoozeAlarm(alarm: Alarm) {
+        println("Snooze alarm")
     }
 
     private fun toggleAlarm(alarm: Alarm, status: Boolean) {
