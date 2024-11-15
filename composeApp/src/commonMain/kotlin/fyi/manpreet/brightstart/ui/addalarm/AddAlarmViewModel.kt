@@ -18,14 +18,23 @@ import fyi.manpreet.brightstart.data.repository.AlarmRepository
 import fyi.manpreet.brightstart.scheduler.AlarmScheduler
 import fyi.manpreet.brightstart.ui.model.AlarmConstants
 import fyi.manpreet.brightstart.ui.model.AlarmTimeSelector
+import fyi.manpreet.brightstart.ui.model.Hour
+import fyi.manpreet.brightstart.ui.model.Minute
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atTime
+import kotlinx.datetime.plus
+import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
 
 class AddAlarmViewModel(
     private val alarmScheduler: AlarmScheduler,
@@ -77,14 +86,8 @@ class AddAlarmViewModel(
         val hour = timeSelector.value.hours[timeSelector.value.selectedHourIndex]
         // TODO Handle for 24 hours
         val minutes = timeSelector.value.minutes[timeSelector.value.selectedMinuteIndex]
-        timeSelector.update {
-            it.copy(
-                selectedTime = AlarmTimeSelector.AlarmSelectedTime(
-                    hour = hour,
-                    minute = minutes,
-                )
-            )
-        }
+
+        onTimeSelectionUpdate(hour, minutes)
 
 //        val time = timeSelector.value?.let {
 //            var hour = it.hours[it.selectedHourIndex].toInt()
@@ -104,7 +107,7 @@ class AddAlarmViewModel(
             localTime = Clock.System.now().plus(10.seconds)
                 .toLocalDateTime(TimeZone.currentSystemDefault()),
             time = AlarmTime(""),
-            name = AlarmName(""), // TODO Get text from strings or use default while adding alarm
+            name = AlarmName("Alarm"), // TODO Get text from strings or use default while adding alarm
             ringtoneReference = RingtoneReference(""),
             ringtoneName = RingtoneName(""),
             volume = Volume(AlarmConstants.VOLUME), // TODO Should set default volume of phone
@@ -170,6 +173,7 @@ class AddAlarmViewModel(
     private fun addAlarm() {
         Logger.d("Alarm addAlarm")
         val currentAlarm = currentAlarm.value
+
         val time =
             AlarmTime(currentAlarm.localTime.toString()) // TODO Construct time from localTime
         val name = AlarmName(currentAlarm.name.value.ifEmpty { AlarmName("New Alarm") }.toString())
@@ -180,8 +184,7 @@ class AddAlarmViewModel(
         require(ringtoneName.value.isNotEmpty()) { "Ringtone Reference is empty" }
 
         val alarm = Alarm(
-            localTime = Clock.System.now().plus(10.seconds)
-                .toLocalDateTime(TimeZone.currentSystemDefault()),
+            localTime = currentAlarm.localTime, //Clock.System.now().plus(10.seconds).toLocalDateTime(TimeZone.currentSystemDefault()),
             time = time,
             name = name, // TODO Get text from strings
             ringtoneReference = ringtoneReference,
@@ -234,4 +237,63 @@ class AddAlarmViewModel(
         }
         currentAlarm.update { it.copy(alarmDays = alarmDays) }
     }
+
+    private fun onTimeSelectionUpdate(hour: Hour, minutes: Minute) {
+        // Get system date time
+        val systemLocalDateTime =
+            Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        // Convert to instant with current time zone
+        val systemDateTimeInstant: Instant =
+            systemLocalDateTime.toInstant(TimeZone.currentSystemDefault())
+
+        // Get today's date
+        val todayLocalDate = systemLocalDateTime.date
+        // Create selected LocalTime
+        val selectedLocalTime =
+            LocalTime(hour = hour.value, minute = minutes.value, second = 0, nanosecond = 0)
+        // Create selected LocalDateTime
+        var selectedLocalDateTime = todayLocalDate.atTime(selectedLocalTime)
+        // Create selected Instant with UTC time zone as systemDateTimeInstant is in UTC
+        var selectedLocalDateTimeInstant = selectedLocalDateTime.toInstant(TimeZone.UTC)
+
+        // Compare to see if selected time is less than current time. If so, add a day to schedule the alarm for the next day
+        if (selectedLocalTime < systemLocalDateTime.time) {
+            // If selected time is less than current time, set it for next day
+            val updatedLocalDate = todayLocalDate.plus(DatePeriod(days = 1))
+            selectedLocalDateTime = updatedLocalDate.atTime(selectedLocalTime)
+            selectedLocalDateTimeInstant =
+                selectedLocalDateTime.toInstant(TimeZone.currentSystemDefault())
+        }
+
+        // Create formatted string for time left for alarm
+        val timeLeftForAlarm = formatDuration(selectedLocalDateTimeInstant, systemDateTimeInstant)
+        currentAlarm.update {
+            it.copy(
+                localTime = selectedLocalDateTime,
+                timeLeftForAlarm = timeLeftForAlarm
+            )
+        }
+
+        timeSelector.update {
+            it.copy(
+                selectedTime = AlarmTimeSelector.AlarmSelectedTime(hour = hour, minute = minutes)
+            )
+        }
+    }
+
+    private fun formatDuration(selectedDateTime: Instant, systemDateTime: Instant): String {
+        val duration = selectedDateTime.minus(systemDateTime)
+
+        val days = duration.toInt(DurationUnit.DAYS)
+        val hours = duration.toInt(DurationUnit.HOURS) % 24
+        val minutes = duration.toInt(DurationUnit.MINUTES) % 60
+
+        return buildString {
+            append("Alarm in ")
+            if (days > 0) append("${days}d ")
+            if (hours > 0 || days > 0) append("${hours}h ")
+            append("${minutes}min")
+        }.trim()
+    }
+
 }

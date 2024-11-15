@@ -20,6 +20,7 @@ data class Alarm(
     val vibrationStatus: VibrationStatus,
     val alarmDays: List<AlarmDays>,
     val isActive: AlarmActive,
+    val timeLeftForAlarm: String = "",
 ) {
 
     data class AlarmDays(
