@@ -1,4 +1,4 @@
-package fyi.manpreet.brightstart.scheduler
+package fyi.manpreet.brightstart.platform.scheduler
 
 import android.app.PendingIntent
 

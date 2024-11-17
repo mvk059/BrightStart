@@ -1,7 +1,7 @@
 package fyi.manpreet.brightstart.di
 
-import fyi.manpreet.brightstart.scheduler.AlarmScheduler
-import fyi.manpreet.brightstart.scheduler.AlarmSchedulerImpl
+import fyi.manpreet.brightstart.platform.scheduler.AlarmScheduler
+import fyi.manpreet.brightstart.platform.scheduler.AlarmSchedulerImpl
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind

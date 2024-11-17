@@ -1,4 +1,4 @@
-package fyi.manpreet.brightstart.scheduler
+package fyi.manpreet.brightstart.platform.scheduler
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -10,13 +10,13 @@ import android.content.Intent
 import android.net.Uri
 import androidx.core.app.NotificationCompat
 import fyi.manpreet.brightstart.AlarmTriggerActivity
-import fyi.manpreet.brightstart.scheduler.AlarmConstants.ALARM_ID
-import fyi.manpreet.brightstart.scheduler.AlarmConstants.CHANNEL_NAME
-import fyi.manpreet.brightstart.scheduler.AlarmConstants.CLOSE_ACTION
-import fyi.manpreet.brightstart.scheduler.AlarmConstants.DISMISS_ACTION
-import fyi.manpreet.brightstart.scheduler.AlarmConstants.FULL_SCREEN
-import fyi.manpreet.brightstart.scheduler.AlarmConstants.PENDING_INTENT_FLAGS
-import fyi.manpreet.brightstart.scheduler.AlarmConstants.SNOOZE_ACTION
+import fyi.manpreet.brightstart.platform.scheduler.AlarmConstants.ALARM_ID
+import fyi.manpreet.brightstart.platform.scheduler.AlarmConstants.CHANNEL_NAME
+import fyi.manpreet.brightstart.platform.scheduler.AlarmConstants.CLOSE_ACTION
+import fyi.manpreet.brightstart.platform.scheduler.AlarmConstants.DISMISS_ACTION
+import fyi.manpreet.brightstart.platform.scheduler.AlarmConstants.FULL_SCREEN
+import fyi.manpreet.brightstart.platform.scheduler.AlarmConstants.PENDING_INTENT_FLAGS
+import fyi.manpreet.brightstart.platform.scheduler.AlarmConstants.SNOOZE_ACTION
 import org.koin.core.component.KoinComponent
 
 // TODO RECEIVE_BOOT_COMPLETED permission

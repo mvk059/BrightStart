@@ -34,13 +34,13 @@
             android:exported="true"
             android:launchMode="singleTop" />
         <receiver
-            android:name=".scheduler.AlarmReceiver"
+            android:name=".platform.scheduler.AlarmReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="fyi.manpreet.brightstart.ALARM_TRIGGER" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".scheduler.AlarmNotificationReceiver" />
+        <receiver android:name=".platform.scheduler.AlarmNotificationReceiver" />
     </application>
 
 </manifest>

@@ -15,7 +15,7 @@ import fyi.manpreet.brightstart.data.model.RingtoneReference
 import fyi.manpreet.brightstart.data.model.VibrationStatus
 import fyi.manpreet.brightstart.data.model.Volume
 import fyi.manpreet.brightstart.data.repository.AlarmRepository
-import fyi.manpreet.brightstart.scheduler.AlarmScheduler
+import fyi.manpreet.brightstart.platform.scheduler.AlarmScheduler
 import fyi.manpreet.brightstart.ui.model.AlarmConstants
 import fyi.manpreet.brightstart.ui.model.AlarmTimeSelector
 import fyi.manpreet.brightstart.ui.model.Hour

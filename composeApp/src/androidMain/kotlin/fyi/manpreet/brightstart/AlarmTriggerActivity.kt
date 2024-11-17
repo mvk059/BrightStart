@@ -1,13 +1,12 @@
 package fyi.manpreet.brightstart
 
 import android.os.Bundle
-import android.system.Os.close
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import fyi.manpreet.brightstart.scheduler.AlarmScheduler
+import fyi.manpreet.brightstart.platform.scheduler.AlarmScheduler
 import fyi.manpreet.brightstart.ui.home.HomeViewModel
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
