@@ -1,5 +1,6 @@
 package fyi.manpreet.brightstart.data.model
 
+import fyi.manpreet.brightstart.ui.model.TimePeriod
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -14,6 +15,7 @@ data class Alarm(
         .toLocalDateTime(TimeZone.currentSystemDefault()),
     val time: AlarmTime,
     val name: AlarmName,
+    val timePeriod: TimePeriod,
     val ringtoneReference: RingtoneReference,
     val ringtoneName: RingtoneName,
     val volume: Volume,

@@ -9,6 +9,7 @@ data class AlarmTable(
     @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     @ColumnInfo(name = "time") val time: String, // Store time in "HH:mm" format
     @ColumnInfo(name = "name") val name: String,
+    @ColumnInfo(name = "time_period") val timePeriod: String,
     @ColumnInfo(name = "ringtone_reference") val ringtoneReference: String,
     @ColumnInfo(name = "ringtone_name") val ringtoneName: String,
     @ColumnInfo(name = "volume") val volume: Int,

@@ -13,11 +13,14 @@ import fyi.manpreet.brightstart.data.model.RingtoneName
 import fyi.manpreet.brightstart.data.model.RingtoneReference
 import fyi.manpreet.brightstart.data.model.VibrationStatus
 import fyi.manpreet.brightstart.data.model.Volume
+import fyi.manpreet.brightstart.ui.model.TimePeriod
+import fyi.manpreet.brightstart.ui.model.TimePeriodValue
 
 fun Alarm.toAlarmTable(): AlarmTable {
     return AlarmTable(
         id = id,
         time = time.value,
+        timePeriod = timePeriod.value.name,
         name = name.value,
         ringtoneReference = ringtoneReference.value,
         ringtoneName = ringtoneName.value,
@@ -40,6 +43,9 @@ fun List<AlarmTable>.toAlarm() =
 fun AlarmTable.toAlarm() = Alarm(
     id = id,
     time = AlarmTime(time),
+    timePeriod =
+    if (timePeriod.lowercase() == TimePeriodValue.AM.name) TimePeriod(TimePeriodValue.AM)
+    else TimePeriod(TimePeriodValue.PM),
     name = AlarmName(name),
     ringtoneReference = RingtoneReference(ringtoneReference),
     ringtoneName = RingtoneName(ringtoneName),
