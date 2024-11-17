@@ -5,10 +5,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import fyi.manpreet.brightstart.scheduler.AlarmReceiver.Companion.ALARM_ID
-import fyi.manpreet.brightstart.scheduler.AlarmReceiver.Companion.CLOSE_ACTION
-import fyi.manpreet.brightstart.scheduler.AlarmReceiver.Companion.DISMISS_ACTION
-import fyi.manpreet.brightstart.scheduler.AlarmReceiver.Companion.SNOOZE_ACTION
+import fyi.manpreet.brightstart.scheduler.AlarmConstants.ALARM_ID
+import fyi.manpreet.brightstart.scheduler.AlarmConstants.CLOSE_ACTION
+import fyi.manpreet.brightstart.scheduler.AlarmConstants.DISMISS_ACTION
+import fyi.manpreet.brightstart.scheduler.AlarmConstants.SNOOZE_ACTION
 
 class AlarmNotificationReceiver : BroadcastReceiver() {
 
@@ -24,16 +24,19 @@ class AlarmNotificationReceiver : BroadcastReceiver() {
             SNOOZE_ACTION -> {
                 // Handle snooze action
                 Log.d("NotificationAction", "Snooze clicked")
+                notificationManager.cancel(id)
             }
 
             CLOSE_ACTION -> {
                 // Handle close action
                 Log.d("NotificationAction", "Close clicked")
+                notificationManager.cancel(id)
             }
 
             DISMISS_ACTION -> {
                 // Handle notification dismiss
                 Log.d("NotificationAction", "Notification dismissed")
+                notificationManager.cancel(id)
             }
         }
 
@@ -47,8 +50,6 @@ class AlarmNotificationReceiver : BroadcastReceiver() {
                 ID: $id
                 """.trimIndent()
         )
-
-        notificationManager.cancel(id)
     }
 
     companion object {

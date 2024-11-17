@@ -1,5 +1,6 @@
 package fyi.manpreet.brightstart.scheduler
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -87,6 +88,7 @@ class AlarmReceiver() : BroadcastReceiver(), KoinComponent {
             .addAction(-1, "Close", closePendingIntent)
             .setDeleteIntent(dismissPendingIntent)
             .build()
+        notification.flags = notification.flags or Notification.FLAG_INSISTENT
 
         // Show the notification
         notificationManager.notify(alarmId.toInt(), notification)
