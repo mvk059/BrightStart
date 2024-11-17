@@ -15,6 +15,9 @@ import fyi.manpreet.brightstart.data.model.RingtoneReference
 import fyi.manpreet.brightstart.data.model.VibrationStatus
 import fyi.manpreet.brightstart.data.model.Volume
 import fyi.manpreet.brightstart.data.repository.AlarmRepository
+import fyi.manpreet.brightstart.platform.permission.Permission
+import fyi.manpreet.brightstart.platform.permission.PermissionState
+import fyi.manpreet.brightstart.platform.permission.service.PermissionService
 import fyi.manpreet.brightstart.platform.scheduler.AlarmScheduler
 import fyi.manpreet.brightstart.ui.model.AlarmConstants
 import fyi.manpreet.brightstart.ui.model.AlarmTimeSelector
@@ -43,6 +46,7 @@ import kotlin.time.DurationUnit
 
 class AddAlarmViewModel(
     private val alarmScheduler: AlarmScheduler,
+    private val permissionService: PermissionService,
     private val repository: AlarmRepository,
 ) : ViewModel() {
 
@@ -55,6 +59,20 @@ class AddAlarmViewModel(
     val repeatDays: StateFlow<String>
         field = MutableStateFlow("")
 
+    val onAlarmAdded: StateFlow<Boolean>
+        field = MutableStateFlow(false)
+
+    val permissionStatus: StateFlow<PermissionState>
+        field = MutableStateFlow(PermissionState.NOT_DETERMINED)
+
+    override fun onCleared() {
+        super.onCleared()
+        currentAlarm.update { initCurrentAlarm() }
+        timeSelector.update { AlarmTimeSelector() }
+        repeatDays.update { "" }
+        onAlarmAdded.update { false }
+    }
+
     fun updateCurrentAlarm(alarmId: Long?) {
         if (alarmId == null) return
         viewModelScope.launch {
@@ -66,12 +84,14 @@ class AddAlarmViewModel(
 
     fun onEvent(event: AddAlarmEvent) {
         when (event) {
-            AddAlarmEvent.AddAlarm -> addAlarm()
+            AddAlarmEvent.AddAlarm -> checkPermission()
             is AddAlarmEvent.SoundUpdate -> onSoundUpdate(event.data)
             is AddAlarmEvent.VolumeUpdate -> onVolumeUpdate(event.volume)
             is AddAlarmEvent.VibrateUpdate -> onVibrateUpdate(event.vibrationStatus)
             is AddAlarmEvent.NameUpdate -> onAlarmNameUpdate(event.name)
             is AddAlarmEvent.RepeatUpdate -> onRepeatItemClick(event.item)
+            is AddAlarmEvent.OpenSettings -> openSettingsPage(event.type)
+            is AddAlarmEvent.DismissPermissionDialog -> onPermissionDialogDismiss()
         }
     }
 
@@ -178,6 +198,28 @@ class AddAlarmViewModel(
             )
         }
 
+    private fun checkPermission() {
+        val permissionState = permissionService.checkPermission(Permission.NOTIFICATION)
+        Logger.i(PermissionsTag) { "Permission state: $permissionState" }
+
+        when (permissionState) {
+            PermissionState.NOT_DETERMINED -> provideNotificationsPermission()
+            PermissionState.DENIED -> permissionStatus.update { PermissionState.DENIED }
+            PermissionState.GRANTED -> addAlarm()
+        }
+    }
+
+    private fun provideNotificationsPermission() {
+        viewModelScope.launch {
+            permissionService.providePermission(Permission.NOTIFICATION)
+            checkPermission()
+        }
+    }
+
+    private fun openSettingsPage(permission: Permission) {
+        permissionService.openSettingsPage(permission)
+    }
+
     private fun addAlarm() {
         Logger.d("Alarm addAlarm")
         val currentAlarm = currentAlarm.value
@@ -210,6 +252,8 @@ class AddAlarmViewModel(
             println("Add Alarm id: $id")
             alarmScheduler.schedule(alarm.copy(id = id))
         }
+
+        onAlarmAdded.update { true }
     }
 
     private fun onSoundUpdate(data: Pair<String?, String?>) {
@@ -245,6 +289,10 @@ class AddAlarmViewModel(
             else oldItem
         }
         currentAlarm.update { it.copy(alarmDays = alarmDays) }
+    }
+
+    private fun onPermissionDialogDismiss() {
+        permissionStatus.update { PermissionState.NOT_DETERMINED }
     }
 
     private fun onTimeSelectionUpdate(hour: Hour, minutes: Minute, timePeriod: TimePeriod) {
@@ -323,6 +371,10 @@ class AddAlarmViewModel(
         val timePeriod = if (hour < 12) "AM" else "PM"
         val formattedHour = if (hour > 12) hour - 12 else hour
         return "$formattedHour:$minute $timePeriod"
+    }
+
+    companion object {
+        private const val PermissionsTag = "Permissions"
     }
 
 }

@@ -2,6 +2,7 @@
 <resources>
     <string name="common_yes">Yes</string>
     <string name="common_no">No</string>
+    <string name="common_cancel">Cancel</string>
 
     <string name="alarm_empty">It's empty! Add the first alarm so you don't miss an important moment!</string>
 
@@ -19,5 +20,9 @@
     <string name="add_alarm_repeat_thu">Th</string>
     <string name="add_alarm_repeat_fri">Fr</string>
     <string name="add_alarm_repeat_sat">Sa</string>
+
+    <string name="permission_denied_title">Permission Denied</string>
+    <string name="permission_denied_message">Your alarm will not trigger unless you provide this permission</string>
+    <string name="permission_denied_settings">Go to Settings</string>
 
 </resources>

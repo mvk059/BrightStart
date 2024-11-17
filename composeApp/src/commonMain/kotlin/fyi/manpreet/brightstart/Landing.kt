@@ -11,9 +11,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import fyi.manpreet.brightstart.navigation.AddAlarmDestination
 import fyi.manpreet.brightstart.navigation.HomeDestination
+import fyi.manpreet.brightstart.platform.permission.PermissionState
 import fyi.manpreet.brightstart.ui.addalarm.AddAlarm
 import fyi.manpreet.brightstart.ui.addalarm.AddAlarmEvent
 import fyi.manpreet.brightstart.ui.addalarm.AddAlarmViewModel
+import fyi.manpreet.brightstart.ui.components.permission.PermissionDeniedDialog
 import fyi.manpreet.brightstart.ui.home.HomeScreen
 import fyi.manpreet.brightstart.ui.home.HomeViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -55,12 +57,23 @@ fun Landing(
             val args = it.toRoute<AddAlarmDestination>()
             viewModel.updateCurrentAlarm(args.alarmId)
 
+            val onAlarmAdded = viewModel.onAlarmAdded.collectAsStateWithLifecycle()
+            val permissionStatus = viewModel.permissionStatus.collectAsStateWithLifecycle()
+
             LaunchedEffect(ringtoneData.value) {
                 val data = ringtoneData.value
                 if (data != null) {
                     viewModel.onEvent(AddAlarmEvent.SoundUpdate(data))
                 }
             }
+
+            LaunchedEffect(onAlarmAdded.value) {
+                if (onAlarmAdded.value) {
+                    navController.previousBackStackEntry?.savedStateHandle?.set("reload", true)
+                    navController.popBackStack()
+                }
+            }
+
             AddAlarm(
                 alarm = viewModel.currentAlarm,
                 alarmTimeSelector = viewModel.timeSelector,
@@ -76,11 +89,16 @@ fun Landing(
                 openRingtonePicker = { homeViewModel.updateRingtoneState(true) },
                 onAddClick = {
                     viewModel.onEvent(AddAlarmEvent.AddAlarm)
-                    navController.previousBackStackEntry?.savedStateHandle?.set("reload", true)
-                    navController.popBackStack()
                 },
                 onCloseClick = { navController.popBackStack() }, // TODO Check what's the issue with this
             )
+
+            if (permissionStatus.value == PermissionState.DENIED) {
+                PermissionDeniedDialog(
+                    onSettingsClick = viewModel::onEvent,
+                    onDismissRequest = viewModel::onEvent,
+                )
+            }
 
         }
     }

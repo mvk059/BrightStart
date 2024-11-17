@@ -4,6 +4,8 @@ import fyi.manpreet.brightstart.data.datasource.AlarmLocalDataSource
 import fyi.manpreet.brightstart.data.datasource.AlarmLocalDataSourceImpl
 import fyi.manpreet.brightstart.data.repository.AlarmRepository
 import fyi.manpreet.brightstart.data.repository.AlarmRepositoryImpl
+import fyi.manpreet.brightstart.platform.permission.service.PermissionService
+import fyi.manpreet.brightstart.platform.permission.service.PermissionServiceImpl
 import fyi.manpreet.brightstart.ui.addalarm.AddAlarmViewModel
 import fyi.manpreet.brightstart.ui.home.HomeViewModel
 import org.koin.core.context.startKoin
@@ -20,8 +22,10 @@ fun initKoin(config: KoinAppDeclaration? = null) =
             provideLocalDataSourceModule,
             provideRepositoryModule,
             provideViewModelModule,
+            providePermissionModule,
             provideDatabaseModule(),
             provideAlarmModule(),
+            providePermissionsModule(),
         )
     }
 
@@ -36,4 +40,8 @@ val provideRepositoryModule = module {
 val provideViewModelModule = module {
     singleOf(::HomeViewModel)
     viewModelOf(::AddAlarmViewModel)
+}
+
+private val providePermissionModule = module {
+    singleOf(::PermissionServiceImpl) bind PermissionService::class
 }

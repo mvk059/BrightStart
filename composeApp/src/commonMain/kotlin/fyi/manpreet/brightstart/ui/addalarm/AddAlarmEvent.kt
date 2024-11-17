@@ -1,6 +1,7 @@
 package fyi.manpreet.brightstart.ui.addalarm
 
 import fyi.manpreet.brightstart.data.model.Alarm.AlarmDays
+import fyi.manpreet.brightstart.platform.permission.Permission
 
 sealed interface AddAlarmEvent {
 
@@ -15,5 +16,9 @@ sealed interface AddAlarmEvent {
     data class NameUpdate(val name: String) : AddAlarmEvent
 
     data class RepeatUpdate(val item: AlarmDays) : AddAlarmEvent
+
+    data class OpenSettings(val type: Permission) : AddAlarmEvent
+
+    data object DismissPermissionDialog : AddAlarmEvent
 
 }
