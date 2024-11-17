@@ -1,4 +1,4 @@
-package fyi.manpreet.brightstart.ui.components.clock.component
+package fyi.manpreet.brightstart.ui.addalarm.components.clock.component
 
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Rect

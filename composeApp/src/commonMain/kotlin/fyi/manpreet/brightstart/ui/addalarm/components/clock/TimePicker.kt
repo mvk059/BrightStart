@@ -1,17 +1,16 @@
-package fyi.manpreet.brightstart.ui.components.clock
+package fyi.manpreet.brightstart.ui.addalarm.components.clock
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -34,8 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import fyi.manpreet.brightstart.ui.components.clock.component.AddAlarmTimePickerShape
-import fyi.manpreet.brightstart.ui.components.clock.component.SwipeLazyColumn
+import fyi.manpreet.brightstart.ui.addalarm.components.clock.component.AddAlarmTimePickerShape
 import fyi.manpreet.brightstart.ui.model.AlarmTimeSelector
 import fyi.manpreet.brightstart.ui.model.AlarmTimeSelector.TimeConfig
 import fyi.manpreet.brightstart.ui.model.Hour
@@ -90,7 +88,7 @@ fun TimePicker(
                 minutes = alarmTimeSelector.minutes,
                 selectedMinuteIndex = alarmTimeSelector.selectedMinuteIndex,
                 onSelectedMinuteIndexChange = onMinuteIndexUpdate,
-                timePeriod = alarmTimeSelector.timePeriod,
+                timePeriods = alarmTimeSelector.timePeriod,
                 selectedTimeOfDayIndex = alarmTimeSelector.selectedTimePeriodIndex,
                 onSelectedTimeOfDayIndexChange = onTimePeriodIndexUpdate,
                 timeFormat = alarmTimeSelector.timeFormat,
@@ -124,7 +122,7 @@ private fun TimePickerView(
     minutes: List<Minute>,
     selectedMinuteIndex: Int,
     onSelectedMinuteIndexChange: (Int) -> Unit,
-    timePeriod: List<TimePeriod>,
+    timePeriods: List<TimePeriod>,
     selectedTimeOfDayIndex: Int,
     onSelectedTimeOfDayIndexChange: (Int) -> Unit,
     timeFormat: TimeFormat,
@@ -146,20 +144,16 @@ private fun TimePickerView(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            // TODO Animate size change on selection. Handle selection
-            Text(
-//                modifier = Modifier.weight(1f),
-                text = "AM",
-                color = Color.DarkGray,
-            )
-
-            Spacer(Modifier.width(24.dp))
-
-            Text(
-//                modifier = Modifier.weight(1f),
-                text = "PM",
-                color = Color.LightGray,
-            )
+            timePeriods.forEachIndexed { index, period ->
+                // TODO Animate size change on selection. Handle selection
+                Text(
+                    modifier = Modifier
+                        .clickable { onSelectedTimeOfDayIndexChange(index) }
+                        .padding(horizontal = 16.dp),
+                    text = period.value.name,
+                    color = if (selectedTimeOfDayIndex == index) Color.DarkGray else Color.LightGray,
+                )
+            }
         }
 
         Row(
@@ -237,7 +231,7 @@ private fun SwipeLazyColumn(
     val coroutineScope = rememberCoroutineScope()
     var isAutoScrolling by remember { mutableStateOf(false) }
     val listState = rememberLazyListState(selectedIndex)
-    SwipeLazyColumn(
+    fyi.manpreet.brightstart.ui.addalarm.components.clock.component.SwipeLazyColumn(
         modifier = modifier,
         selectedIndex = selectedIndex,
         onSelectedIndexChange = onSelectedIndexChange,

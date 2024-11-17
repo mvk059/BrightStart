@@ -21,7 +21,7 @@ import fyi.manpreet.brightstart.ui.addalarm.components.sound.Sound
 import fyi.manpreet.brightstart.ui.addalarm.components.vibrate.Vibrate
 import fyi.manpreet.brightstart.ui.addalarm.components.volume.Volume
 import fyi.manpreet.brightstart.ui.addalarm.components.toprow.AddAlarmTopRow
-import fyi.manpreet.brightstart.ui.components.clock.TimePicker
+import fyi.manpreet.brightstart.ui.addalarm.components.clock.TimePicker
 import fyi.manpreet.brightstart.ui.model.AlarmTimeSelector
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -29,10 +29,11 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 /**
  *
  * Time Picker: Takes 70% of the screen
+ * TODO Use device locale to determine 12/24 hour format
  * TODO Sound, Volume, Vibrate, Repeat, Name, Time left for alarm
  * TODO Close and Save button at bottom left and right respectively
  * TODO Handle status bar and navigation bar background colors
- * TODO Set fonts
+ * TODO Set font
  * TODO Setup theme
  * TODO Set text size/style based on theme for all text
  * TODO Keep weight of both the rows same in terms of height as well
@@ -79,6 +80,7 @@ fun AddAlarm(
 
         TimePicker(
             alarmTimeSelector = alarmTimeSelector.value,
+            timeLeftForAlarm = alarm.value.timeLeftForAlarm,
             onHourIndexUpdate = onHourIndexUpdate,
             onMinuteIndexUpdate = onMinuteIndexUpdate,
             onTimePeriodIndexUpdate = onTimePeriodIndexUpdate,
