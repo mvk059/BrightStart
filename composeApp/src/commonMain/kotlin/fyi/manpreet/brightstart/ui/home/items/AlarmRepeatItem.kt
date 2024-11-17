@@ -2,23 +2,54 @@ package fyi.manpreet.brightstart.ui.home.items
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import fyi.manpreet.brightstart.data.model.Alarm
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
+@Composable
+fun AlarmRepeatItem(
+    modifier: Modifier = Modifier,
+    alarm: Alarm,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .padding(top = 16.dp),
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+
+        Box(
+            modifier = Modifier
+                .background(color = Color.Blue, shape = CircleShape)
+                .size(4.dp)
+                .padding(horizontal = 8.dp),
+        )
+
+        Text(
+            modifier = Modifier.padding(start = 8.dp),
+            text = "Repeat",
+            style = MaterialTheme.typography.bodySmall.copy(
+                color = Color.Gray,
+            )
+        )
+    }
+}
+
+/* TODO Remove code
 @Composable
 fun AlarmRepeatItem(
     modifier: Modifier = Modifier,
@@ -57,6 +88,8 @@ fun AlarmRepeatItem(
     }
 
 }
+
+ */
 
 @Composable
 @Preview

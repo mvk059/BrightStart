@@ -1,5 +1,6 @@
 package fyi.manpreet.brightstart.ui.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import fyi.manpreet.brightstart.data.model.Alarm
@@ -33,11 +35,15 @@ fun HomeScreen(
             "reload",
             false
         )?.collectAsStateWithLifecycle()
+
     LaunchedEffect(shouldReload) {
         if (shouldReload?.value == true) {
             println("OnReload")
             onReload(HomeEvent.FetchAlarms)
-            navController.currentBackStackEntry?.savedStateHandle?.set("reload", false) // TODO Add constant
+            navController.currentBackStackEntry?.savedStateHandle?.set(
+                "reload",
+                false
+            ) // TODO Add constant
         }
     }
 
@@ -54,7 +60,9 @@ fun HomeScreen(
         },
     ) {
 
-        Box(modifier = modifier.fillMaxSize()) {
+        Box(
+            modifier = modifier.fillMaxSize().background(Color(0xFFf5f5f5))
+        ) {
             HomeContent(
                 alarms = alarms,
                 onAlarmClick = onAlarmClick,

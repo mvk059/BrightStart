@@ -8,15 +8,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import fyi.manpreet.brightstart.data.model.Alarm
 import fyi.manpreet.brightstart.ui.home.items.AlarmRepeatItem
 import fyi.manpreet.brightstart.ui.home.items.AlarmTimeItem
 import fyi.manpreet.brightstart.ui.home.items.AlarmTimeRemainingItem
-import fyi.manpreet.brightstart.ui.home.items.AlarmToggleRowItem
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -34,6 +35,9 @@ fun AlarmCard(
             .clickable { onAlarmClick(alarm) }
             .padding(horizontal = 0.dp, vertical = 0.dp),
         shape = RoundedCornerShape(size = 16.dp),
+        colors = CardDefaults.cardColors().copy(
+            containerColor = Color.White,
+        )
     ) {
 
         Column(
@@ -42,19 +46,21 @@ fun AlarmCard(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
 
-            AlarmToggleRowItem(
+            AlarmRepeatItem(
                 alarm = alarm,
-                onAlarmStatusChange = onAlarmStatusChange,
             )
 
             // TODO Send only required items
             AlarmTimeItem(
                 alarm = alarm,
+                onAlarmStatusChange = onAlarmStatusChange,
             )
 
-            AlarmRepeatItem(
-                alarm = alarm,
-            )
+//            AlarmToggleRowItem(
+//                alarm = alarm,
+//                onAlarmStatusChange = onAlarmStatusChange,
+//            )
+
 
             AlarmTimeRemainingItem(
                 alarm = alarm,
