@@ -15,9 +15,11 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fyi.manpreet.brightstart.ui.home.HomeViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import kotlin.getValue
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), KoinComponent {
 
     private val sharedViewModel: HomeViewModel by viewModel()
 
@@ -30,6 +32,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        get<MainActivityUseCase>().setActivity(this)
 
         installSplashScreen()
         setContent {
@@ -48,6 +51,12 @@ class MainActivity : ComponentActivity() {
             App()
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        get<MainActivityUseCase>().setActivity(null)
+    }
+
 
     fun launchRingtoneActivity() {
         ringtoneContract.launch(RingtoneManager.TYPE_RINGTONE)
