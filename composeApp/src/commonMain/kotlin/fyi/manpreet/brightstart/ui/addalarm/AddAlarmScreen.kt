@@ -47,7 +47,6 @@ fun AddAlarm(
     onMinuteIndexUpdate: (Int) -> Unit,
     onTimePeriodIndexUpdate: (Int) -> Unit,
     onTimeScrollingUpdate: () -> Unit,
-    repeatDays: StateFlow<String>,
     onVolumeUpdate: (AddAlarmEvent) -> Unit,
     onVibrateUpdate: (AddAlarmEvent) -> Unit,
     onNameUpdate: (AddAlarmEvent) -> Unit,
@@ -62,7 +61,6 @@ fun AddAlarm(
     // TODO Increase padding of each component slightly for better clickability
     println("AddAlarmScreen: ${alarm.value}")
     val alarm = alarm.collectAsStateWithLifecycle()
-    val repeatDays = repeatDays.collectAsStateWithLifecycle()
     val alarmTimeSelector = alarmTimeSelector.collectAsStateWithLifecycle()
 
     Column(
@@ -93,7 +91,7 @@ fun AddAlarm(
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp),
             alarmDays = alarm.value.alarmDays,
-            repeatTitle = repeatDays.value,
+            repeatTitle = alarm.value.repeatDays,
             onRepeatUpdate = onRepeatUpdate,
         )
 

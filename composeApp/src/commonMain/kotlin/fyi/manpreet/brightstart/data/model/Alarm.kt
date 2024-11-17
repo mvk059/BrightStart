@@ -1,5 +1,6 @@
 package fyi.manpreet.brightstart.data.model
 
+import fyi.manpreet.brightstart.data.model.Alarm.AlarmDays
 import fyi.manpreet.brightstart.ui.model.TimePeriod
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
@@ -21,6 +22,7 @@ data class Alarm(
     val volume: Volume,
     val vibrationStatus: VibrationStatus,
     val alarmDays: List<AlarmDays>,
+    val repeatDays: String,
     val isActive: AlarmActive,
     val timeLeftForAlarm: String = "",
 ) {

@@ -81,7 +81,6 @@ fun Landing(
                 onMinuteIndexUpdate = viewModel::onMinuteIndexUpdate,
                 onTimePeriodIndexUpdate = viewModel::onTimePeriodIndexUpdate,
                 onTimeScrollingUpdate = viewModel::onTimeScrollingUpdate,
-                repeatDays = viewModel.repeatDays,
                 onVolumeUpdate = viewModel::onEvent,
                 onVibrateUpdate = viewModel::onEvent,
                 onNameUpdate = viewModel::onEvent,

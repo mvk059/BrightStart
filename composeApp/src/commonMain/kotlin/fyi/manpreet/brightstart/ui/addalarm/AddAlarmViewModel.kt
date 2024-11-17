@@ -3,6 +3,9 @@ package fyi.manpreet.brightstart.ui.addalarm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import fyi.manpreet.brightstart.data.mapper.constructRepeatDays
+import fyi.manpreet.brightstart.data.mapper.getSelectedHourIndex
+import fyi.manpreet.brightstart.data.mapper.getSelectedMinuteIndex
 import fyi.manpreet.brightstart.data.model.Alarm
 import fyi.manpreet.brightstart.data.model.AlarmActive
 import fyi.manpreet.brightstart.data.model.AlarmDaySelected
@@ -21,8 +24,6 @@ import fyi.manpreet.brightstart.platform.permission.service.PermissionService
 import fyi.manpreet.brightstart.platform.scheduler.AlarmScheduler
 import fyi.manpreet.brightstart.ui.model.AlarmConstants
 import fyi.manpreet.brightstart.ui.model.AlarmTimeSelector
-import fyi.manpreet.brightstart.ui.model.AlarmTimeSelector.Companion.getSelectedHourIndex
-import fyi.manpreet.brightstart.ui.model.AlarmTimeSelector.Companion.getSelectedMinuteIndex
 import fyi.manpreet.brightstart.ui.model.Hour
 import fyi.manpreet.brightstart.ui.model.Minute
 import fyi.manpreet.brightstart.ui.model.TimePeriod
@@ -56,9 +57,6 @@ class AddAlarmViewModel(
     val timeSelector: StateFlow<AlarmTimeSelector>
         field = MutableStateFlow(AlarmTimeSelector())
 
-    val repeatDays: StateFlow<String>
-        field = MutableStateFlow("")
-
     val onAlarmAdded: StateFlow<Boolean>
         field = MutableStateFlow(false)
 
@@ -69,7 +67,6 @@ class AddAlarmViewModel(
         super.onCleared()
         currentAlarm.update { initCurrentAlarm() }
         timeSelector.update { AlarmTimeSelector() }
-        repeatDays.update { "" }
         onAlarmAdded.update { false }
     }
 
@@ -167,6 +164,7 @@ class AddAlarmViewModel(
             volume = Volume(AlarmConstants.VOLUME), // TODO Should set default volume of phone
             vibrationStatus = VibrationStatus(AlarmConstants.VIBRATION_STATUS),  // TODO Should set default vibration status of phone
             alarmDays = initAlarmDays(),
+            repeatDays = "",
             isActive = AlarmActive(AlarmConstants.IS_ACTIVE),
         )
 
@@ -176,49 +174,49 @@ class AddAlarmViewModel(
             add(
                 Alarm.AlarmDays(
                     id = DaysEnum.MONDAY,
-                    day = AlarmDayTitle("Sun"),
-                    isSelected = AlarmDaySelected(false)
-                )
-            )
-            add(
-                Alarm.AlarmDays(
-                    id = DaysEnum.TUESDAY,
                     day = AlarmDayTitle("Mon"),
                     isSelected = AlarmDaySelected(false)
                 )
             )
             add(
                 Alarm.AlarmDays(
-                    id = DaysEnum.WEDNESDAY,
+                    id = DaysEnum.TUESDAY,
                     day = AlarmDayTitle("Tue"),
                     isSelected = AlarmDaySelected(false)
                 )
             )
             add(
                 Alarm.AlarmDays(
-                    id = DaysEnum.THURSDAY,
+                    id = DaysEnum.WEDNESDAY,
                     day = AlarmDayTitle("Wed"),
                     isSelected = AlarmDaySelected(false)
                 )
             )
             add(
                 Alarm.AlarmDays(
-                    id = DaysEnum.FRIDAY,
+                    id = DaysEnum.THURSDAY,
                     day = AlarmDayTitle("Thu"),
                     isSelected = AlarmDaySelected(false)
                 )
             )
             add(
                 Alarm.AlarmDays(
-                    id = DaysEnum.SATURDAY,
+                    id = DaysEnum.FRIDAY,
                     day = AlarmDayTitle("Fri"),
                     isSelected = AlarmDaySelected(false)
                 )
             )
             add(
                 Alarm.AlarmDays(
-                    id = DaysEnum.SUNDAY,
+                    id = DaysEnum.SATURDAY,
                     day = AlarmDayTitle("Sat"),
+                    isSelected = AlarmDaySelected(false)
+                )
+            )
+            add(
+                Alarm.AlarmDays(
+                    id = DaysEnum.SUNDAY,
+                    day = AlarmDayTitle("Sun"),
                     isSelected = AlarmDaySelected(false)
                 )
             )
@@ -270,6 +268,7 @@ class AddAlarmViewModel(
             volume = currentAlarm.volume,
             vibrationStatus = currentAlarm.vibrationStatus,
             alarmDays = currentAlarm.alarmDays,
+            repeatDays = currentAlarm.alarmDays.constructRepeatDays(currentAlarm.localTime),
             isActive = AlarmActive(true),
         )
 

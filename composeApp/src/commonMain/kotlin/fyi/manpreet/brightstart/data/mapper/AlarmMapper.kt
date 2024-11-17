@@ -55,6 +55,7 @@ fun AlarmTable.toAlarm() = Alarm(
     volume = Volume(volume),
     vibrationStatus = VibrationStatus(vibrationStatus),
     alarmDays = this.toAlarmDays(),
+    repeatDays = this.toAlarmDays().constructRepeatDays(LocalDateTime.parse(localDateTime)),
     isActive = AlarmActive(isActive),
 )
 
@@ -63,50 +64,50 @@ fun AlarmTable.toAlarmDays(): List<AlarmDays> =
         add(
             AlarmDays(
                 id = DaysEnum.MONDAY,
-                AlarmDayTitle("Sun"),
-                isSelected = AlarmDaySelected(false)
+                AlarmDayTitle("Mon"),
+                isSelected = AlarmDaySelected(this@toAlarmDays.monday)
             )
         )
         add(
             AlarmDays(
                 id = DaysEnum.TUESDAY,
-                AlarmDayTitle("Mon"),
-                isSelected = AlarmDaySelected(false)
+                AlarmDayTitle("Tue"),
+                isSelected = AlarmDaySelected(this@toAlarmDays.tuesday)
             )
         )
         add(
             AlarmDays(
                 id = DaysEnum.WEDNESDAY,
-                AlarmDayTitle("Tue"),
-                isSelected = AlarmDaySelected(false)
+                AlarmDayTitle("Wed"),
+                isSelected = AlarmDaySelected(this@toAlarmDays.wednesday)
             )
         )
         add(
             AlarmDays(
                 id = DaysEnum.THURSDAY,
-                AlarmDayTitle("Wed"),
-                isSelected = AlarmDaySelected(false)
+                AlarmDayTitle("Thu"),
+                isSelected = AlarmDaySelected(this@toAlarmDays.thursday)
             )
         )
         add(
             AlarmDays(
                 id = DaysEnum.FRIDAY,
-                AlarmDayTitle("Thu"),
-                isSelected = AlarmDaySelected(false)
+                AlarmDayTitle("Fri"),
+                isSelected = AlarmDaySelected(this@toAlarmDays.friday)
             )
         )
         add(
             AlarmDays(
                 id = DaysEnum.SATURDAY,
-                AlarmDayTitle("Fri"),
-                isSelected = AlarmDaySelected(false)
+                AlarmDayTitle("Sat"),
+                isSelected = AlarmDaySelected(this@toAlarmDays.saturday)
             )
         )
         add(
             AlarmDays(
                 id = DaysEnum.SUNDAY,
-                AlarmDayTitle("Sat"),
-                isSelected = AlarmDaySelected(false)
+                AlarmDayTitle("Sun"),
+                isSelected = AlarmDaySelected(this@toAlarmDays.sunday)
             )
         )
     }

@@ -41,7 +41,7 @@ fun AlarmRepeatItem(
 
         Text(
             modifier = Modifier.padding(start = 8.dp),
-            text = "Repeat",
+            text = alarm.repeatDays,
             style = MaterialTheme.typography.bodySmall.copy(
                 color = Color.Gray,
             )

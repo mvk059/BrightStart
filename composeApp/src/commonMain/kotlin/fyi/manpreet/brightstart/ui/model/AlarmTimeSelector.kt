@@ -101,33 +101,6 @@ data class AlarmTimeSelector(
         fun getSelectedMinuteIndex() = getMinutes().size / 2
 
         fun getSelectedTimePeriodIndex() = getTimePeriods().size / 2
-
-        fun Int.getSelectedHourIndex(): Int {
-            // TODO Handle for 24 hours
-            val startRange = ((10 * 12) / 2) //- 1
-            val endRange = (((12 * 10) / 2) + 12) - 1
-            val range = startRange..endRange // Get the middle row of hours
-            val value = if (this > 12) this % 12 else this
-            val searchValue = value + startRange - 1
-            range.forEach { index ->
-                if (searchValue == index) {
-                    return index
-                }
-            }
-            return -1
-        }
-
-        fun Int.getSelectedMinuteIndex(): Int {
-            val startRange = ((10 * 60) / 2) //- 1
-            val endRange = (((10 * 60) / 2) + 59) //- 1
-            val range = startRange..endRange // Get the middle row of minutes
-            range.forEach { index ->
-                if ((this /*% 60*/) == (index % 60)) {
-                    return index
-                }
-            }
-            return -1
-        }
     }
 
 }
