@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "alarm_table")
 data class AlarmTable(
     @PrimaryKey(autoGenerate = true) val id: Long = 0L,
+    @ColumnInfo(name = "localDateTime") val localDateTime: String, // Store LocalDateTime in string format
     @ColumnInfo(name = "time") val time: String, // Store time in "HH:mm" format
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "time_period") val timePeriod: String,

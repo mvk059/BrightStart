@@ -6,6 +6,7 @@ import co.touchlab.kermit.Logger
 import fyi.manpreet.brightstart.data.model.Alarm
 import fyi.manpreet.brightstart.data.model.AlarmActive
 import fyi.manpreet.brightstart.data.repository.AlarmRepository
+import fyi.manpreet.brightstart.platform.scheduler.AlarmScheduler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 class HomeViewModel(
+    private val alarmScheduler: AlarmScheduler,
     private val repository: AlarmRepository,
 ) : ViewModel() {
 
@@ -45,13 +47,13 @@ class HomeViewModel(
         println("VM Alarm triggered: $id")
 
         println("VM Alarm2 ${viewModelScope.isActive}")
-         CoroutineScope(Dispatchers.IO).launch {
-             println("VM Inside launch")
+        CoroutineScope(Dispatchers.IO).launch {
+            println("VM Inside launch")
 //            delay(1000.milliseconds)
 //            val alarm = repository.fetchAlarmById(id)
-             val alarm = repository.fetchAlarmById(id)
-             println("Alarm to trigger: $alarm")
-             alarmTriggerState.update { alarm }
+            val alarm = repository.fetchAlarmById(id)
+            println("Alarm to trigger: $alarm")
+            alarmTriggerState.update { alarm }
         }
 //        viewModelScope.launch {
 //            println("VM Inside launch")
@@ -119,10 +121,13 @@ class HomeViewModel(
 
     private fun toggleAlarm(alarm: Alarm, status: Boolean) {
         viewModelScope.launch {
+            // Schedule or cancel alarm
+            if (status) alarmScheduler.schedule(alarm)
+            else alarmScheduler.cancel(alarm)
+
             val updatedAlarms = alarms.value.map { currentAlarm ->
                 if (alarm == currentAlarm) {
                     val updatedAlarm = currentAlarm.copy(isActive = AlarmActive(status))
-                    println("Alarm to toggle: $updatedAlarm")
                     repository.updateAlarm(updatedAlarm)
                     updatedAlarm
                 } else {
@@ -130,7 +135,6 @@ class HomeViewModel(
                 }
             }
             alarms.update { updatedAlarms }
-            Logger.d("Updated alarms: ${alarms.value.joinToString()}")
         }
     }
 }

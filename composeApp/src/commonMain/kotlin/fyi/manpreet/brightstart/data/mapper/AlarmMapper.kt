@@ -15,10 +15,12 @@ import fyi.manpreet.brightstart.data.model.VibrationStatus
 import fyi.manpreet.brightstart.data.model.Volume
 import fyi.manpreet.brightstart.ui.model.TimePeriod
 import fyi.manpreet.brightstart.ui.model.TimePeriodValue
+import kotlinx.datetime.LocalDateTime
 
 fun Alarm.toAlarmTable(): AlarmTable {
     return AlarmTable(
         id = id,
+        localDateTime = localTime.toString(),
         time = time.value,
         timePeriod = timePeriod.value.name,
         name = name.value,
@@ -42,6 +44,7 @@ fun List<AlarmTable>.toAlarm() =
 
 fun AlarmTable.toAlarm() = Alarm(
     id = id,
+    localTime = LocalDateTime.parse(localDateTime),
     time = AlarmTime(time),
     timePeriod =
     if (timePeriod.lowercase() == TimePeriodValue.AM.name) TimePeriod(TimePeriodValue.AM)

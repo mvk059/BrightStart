@@ -11,6 +11,8 @@
     <string name="add_alarm_volume">Volume</string>
     <string name="add_alarm_name">Alarm Name</string>
     <string name="add_alarm_name_default">Alarm</string>
+    <string name="add_alarm_save">Save</string>
+    <string name="add_alarm_update">Update</string>
 
     <string name="add_alarm_repeat">Repeat</string>
     <string name="add_alarm_repeat_sun">Su</string>

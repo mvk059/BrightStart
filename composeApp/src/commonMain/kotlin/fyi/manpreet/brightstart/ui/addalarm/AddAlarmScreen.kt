@@ -15,13 +15,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fyi.manpreet.brightstart.data.model.Alarm
+import fyi.manpreet.brightstart.ui.addalarm.components.appbar.AddAlarmAppBar
+import fyi.manpreet.brightstart.ui.addalarm.components.clock.TimePicker
 import fyi.manpreet.brightstart.ui.addalarm.components.name.Name
 import fyi.manpreet.brightstart.ui.addalarm.components.repeat.AllAlarmRepeat
 import fyi.manpreet.brightstart.ui.addalarm.components.sound.Sound
 import fyi.manpreet.brightstart.ui.addalarm.components.vibrate.Vibrate
 import fyi.manpreet.brightstart.ui.addalarm.components.volume.Volume
-import fyi.manpreet.brightstart.ui.addalarm.components.toprow.AddAlarmTopRow
-import fyi.manpreet.brightstart.ui.addalarm.components.clock.TimePicker
 import fyi.manpreet.brightstart.ui.model.AlarmTimeSelector
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -73,7 +73,8 @@ fun AddAlarm(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
 
-        AddAlarmTopRow(
+        AddAlarmAppBar(
+            alarm = alarm.value,
             onSaveClick = onAddClick,
             onCloseClick = onCloseClick,
         )

@@ -10,7 +10,7 @@ import kotlin.jvm.JvmInline
 
 // TODO Create value classes
 data class Alarm(
-    val id: Long = 0L,
+    val id: Long = INVALID_ID,
     val localTime: LocalDateTime = Clock.System.now()
         .toLocalDateTime(TimeZone.currentSystemDefault()),
     val time: AlarmTime,
@@ -30,6 +30,10 @@ data class Alarm(
         val day: AlarmDayTitle,
         val isSelected: AlarmDaySelected,
     )
+
+    companion object {
+        const val INVALID_ID = 0L
+    }
 }
 
 @JvmInline

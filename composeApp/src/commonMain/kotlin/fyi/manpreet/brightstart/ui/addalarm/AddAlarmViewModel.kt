@@ -21,6 +21,8 @@ import fyi.manpreet.brightstart.platform.permission.service.PermissionService
 import fyi.manpreet.brightstart.platform.scheduler.AlarmScheduler
 import fyi.manpreet.brightstart.ui.model.AlarmConstants
 import fyi.manpreet.brightstart.ui.model.AlarmTimeSelector
+import fyi.manpreet.brightstart.ui.model.AlarmTimeSelector.Companion.getSelectedHourIndex
+import fyi.manpreet.brightstart.ui.model.AlarmTimeSelector.Companion.getSelectedMinuteIndex
 import fyi.manpreet.brightstart.ui.model.Hour
 import fyi.manpreet.brightstart.ui.model.Minute
 import fyi.manpreet.brightstart.ui.model.TimePeriod
@@ -36,9 +38,7 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
-import kotlinx.datetime.format
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
-import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.plus
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
@@ -79,6 +79,32 @@ class AddAlarmViewModel(
             val alarm = repository.fetchAlarmById(alarmId)
             if (alarm == null) return@launch
             currentAlarm.update { alarm }
+
+            val selectedHourIndex = alarm.localTime.hour.getSelectedHourIndex()
+            val selectedMinuteIndex = alarm.localTime.minute.getSelectedMinuteIndex()
+            val selectedHour = Hour(timeSelector.value.hours[selectedHourIndex].value)
+            val selectedMinute = Minute(timeSelector.value.minutes[selectedMinuteIndex].value)
+            timeSelector.update {
+                it.copy(
+                    selectedHourIndex = selectedHourIndex, //alarm.localTime.hour.getSelectedHourIndex(),
+                    selectedMinuteIndex = selectedMinuteIndex, //alarm.localTime.minute.getSelectedMinuteIndex(),
+                    selectedTimePeriodIndex = it.timePeriod.indexOfFirst { timePeriod -> timePeriod.value == alarm.timePeriod.value },
+                    selectedTime = AlarmTimeSelector.AlarmSelectedTime(
+                        hour = selectedHour, //Hour(alarm.localTime.hour),
+                        minute = selectedMinute, //Minute(alarm.localTime.minute),
+                        timePeriod = TimePeriod(alarm.timePeriod.value)
+                    )
+                )
+            }
+            println(
+                """
+        TimePickerView ViewModel updateCurrentAlarm: 
+        hour: ${timeSelector.value.hours[timeSelector.value.selectedHourIndex]}
+        minute: ${timeSelector.value.minutes[timeSelector.value.selectedMinuteIndex]},
+        timePeriod: ${timeSelector.value.timePeriod[timeSelector.value.selectedTimePeriodIndex]},
+        timeLeftForAlarm: ${currentAlarm.value.timeLeftForAlarm}, 
+    """.trimIndent()
+            )
         }
     }
 
@@ -234,6 +260,7 @@ class AddAlarmViewModel(
         require(ringtoneName.value.isNotEmpty()) { "Ringtone Reference is empty" }
 
         val alarm = Alarm(
+            id = currentAlarm.id,
             localTime = currentAlarm.localTime, //Clock.System.now().plus(10.seconds).toLocalDateTime(TimeZone.currentSystemDefault()),
             time = time,
             name = name, // TODO Get text from strings
@@ -248,9 +275,18 @@ class AddAlarmViewModel(
 
         Logger.d("Alarm schedule start")
         viewModelScope.launch {
-            val id = repository.insertAlarm(alarm)
-            println("Add Alarm id: $id")
-            alarmScheduler.schedule(alarm.copy(id = id))
+            if (currentAlarm.id == Alarm.INVALID_ID) {
+                // Add Alarm
+                val id = repository.insertAlarm(alarm)
+                println("Add Alarm id: $id")
+                alarmScheduler.schedule(alarm.copy(id = id))
+            } else {
+                // Update Alarm
+                repository.updateAlarm(alarm)
+                println("Update Alarm id: ${alarm.id}")
+                alarmScheduler.schedule(alarm)
+            }
+
         }
 
         onAlarmAdded.update { true }
@@ -306,9 +342,15 @@ class AddAlarmViewModel(
         // Get today's date
         val todayLocalDate = systemLocalDateTime.date
         // Create selected LocalTime
-        val selectedHour =
-            if (timePeriod.value == TimePeriodValue.AM) hour.value
-            else hour.value + 12
+        val selectedHour = when {
+            hour.value == 12 && timePeriod.value == TimePeriodValue.AM -> 0 // 12 AM
+            hour.value == 12 && timePeriod.value == TimePeriodValue.PM -> 12 // 12 PM
+            timePeriod.value == TimePeriodValue.PM -> hour.value + 12
+            else -> hour.value
+        }
+//            if (timePeriod.value == TimePeriodValue.AM) hour.value
+//            else (hour.value + 12) % 12
+        println("SelectedHour: $selectedHour")
         val selectedLocalTime =
             LocalTime(hour = selectedHour, minute = minutes.value, second = 0, nanosecond = 0)
         // Create selected LocalDateTime
@@ -345,9 +387,18 @@ class AddAlarmViewModel(
 
     @OptIn(FormatStringsInDatetimeFormats::class)
     private fun formatLocalDateTimeToHHMM(localDateTime: LocalDateTime): String {
-        return localDateTime.format(LocalDateTime.Format {
-            byUnicodePattern("HH:mm")
-        })
+        val hour = localDateTime.hour
+        val minute = localDateTime.minute
+        val formattedHour = if (hour == 0 || hour == 12) 12 else hour % 12
+        val period = if (hour < 12) "AM" else "PM"
+        return buildString {
+            append(formattedHour.toString().padStart(2, '0'))
+            append(":")
+            append(minute.toString().padStart(2, '0'))
+        }
+//        return localDateTime.format(LocalDateTime.Format {
+//            byUnicodePattern("HH:mm")
+//        })
     }
 
     private fun formatDuration(selectedDateTime: Instant, systemDateTime: Instant): String {

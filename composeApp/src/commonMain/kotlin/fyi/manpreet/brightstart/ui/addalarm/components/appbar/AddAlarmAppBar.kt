@@ -1,4 +1,4 @@
-package fyi.manpreet.brightstart.ui.addalarm.components.toprow
+package fyi.manpreet.brightstart.ui.addalarm.components.appbar
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,10 +14,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import brightstart.composeapp.generated.resources.Res
+import brightstart.composeapp.generated.resources.add_alarm_save
+import brightstart.composeapp.generated.resources.add_alarm_update
+import fyi.manpreet.brightstart.data.model.Alarm
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun AddAlarmTopRow(
+fun AddAlarmAppBar(
     modifier: Modifier = Modifier,
+    alarm: Alarm,
     onCloseClick: () -> Unit,
     onSaveClick: () -> Unit,
 ) {
@@ -40,7 +46,10 @@ fun AddAlarmTopRow(
         Button(
             onClick = onSaveClick
         ) {
-            Text(text = "Save")
+            Text(
+                text = if (alarm.id == Alarm.INVALID_ID) stringResource(Res.string.add_alarm_save)
+                else stringResource(Res.string.add_alarm_update)
+            )
         }
     }
 
