@@ -72,7 +72,7 @@ fun Typography(): Typography {
         ),
         titleLarge = TextStyle(
             fontFamily = poppins,
-            fontWeight = FontWeight.Normal,
+            fontWeight = FontWeight.SemiBold,
             fontSize = 30.sp,
             lineHeight = 30.sp,
         ),
