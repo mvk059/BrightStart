@@ -4,10 +4,10 @@
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
-
 
     <application
         android:name=".BrightStartApp"
@@ -30,11 +30,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AlarmTriggerActivity"
-            android:exported="true"
-            android:launchMode="singleTop" />
+        <activity
+            android:name=".AlarmTriggerActivity"
+            android:showOnLockScreen="true"
+            android:turnScreenOn="true"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+<!--        android:screenOrientation="portrait"-->
         <receiver
             android:name=".platform.scheduler.AlarmReceiver"
+            android:enabled="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="fyi.manpreet.brightstart.ALARM_TRIGGER" />

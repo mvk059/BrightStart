@@ -6,6 +6,7 @@ import fyi.manpreet.brightstart.data.repository.AlarmRepository
 import fyi.manpreet.brightstart.data.repository.AlarmRepositoryImpl
 import fyi.manpreet.brightstart.platform.permission.service.PermissionService
 import fyi.manpreet.brightstart.platform.permission.service.PermissionServiceImpl
+import fyi.manpreet.brightstart.platform.scheduler.AlarmInteraction
 import fyi.manpreet.brightstart.ui.addalarm.AddAlarmViewModel
 import fyi.manpreet.brightstart.ui.home.HomeViewModel
 import org.koin.core.context.startKoin
@@ -38,7 +39,7 @@ val provideRepositoryModule = module {
 }
 
 val provideViewModelModule = module {
-    singleOf(::HomeViewModel)
+    singleOf(::HomeViewModel).bind(AlarmInteraction::class)
     viewModelOf(::AddAlarmViewModel)
 }
 

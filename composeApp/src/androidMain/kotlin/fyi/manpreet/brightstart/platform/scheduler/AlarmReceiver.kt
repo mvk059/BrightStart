@@ -44,6 +44,9 @@ class AlarmReceiver() : BroadcastReceiver(), KoinComponent {
         ).apply {
             description = "BrightStartChannel channel description"
             setSound(Uri.parse(ringtoneReference), null)
+            enableLights(true)
+            enableVibration(true)
+            lockscreenVisibility = Notification.VISIBILITY_PUBLIC
         }
         notificationManager.createNotificationChannel(channel)
 

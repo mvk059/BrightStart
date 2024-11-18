@@ -3,9 +3,12 @@ package fyi.manpreet.brightstart.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import fyi.manpreet.brightstart.data.mapper.formatLocalDateTimeToHHMM
 import fyi.manpreet.brightstart.data.model.Alarm
 import fyi.manpreet.brightstart.data.model.AlarmActive
+import fyi.manpreet.brightstart.data.model.AlarmTime
 import fyi.manpreet.brightstart.data.repository.AlarmRepository
+import fyi.manpreet.brightstart.platform.scheduler.AlarmInteraction
 import fyi.manpreet.brightstart.platform.scheduler.AlarmScheduler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,12 +19,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
 
 class HomeViewModel(
     private val alarmScheduler: AlarmScheduler,
     private val repository: AlarmRepository,
-) : ViewModel() {
+) : ViewModel(), AlarmInteraction {
 
     init {
         onEvent(HomeEvent.FetchAlarms)
@@ -39,30 +46,57 @@ class HomeViewModel(
     val alarmTriggerState: StateFlow<Alarm?>
         field = MutableStateFlow(null)
 
-    fun onAlarmTrigger(id: Long) {
-        if (id == -1L) {
-            println("invalid alarm")
-            return
-        }
-        println("VM Alarm triggered: $id")
-
-        println("VM Alarm2 ${viewModelScope.isActive}")
-        CoroutineScope(Dispatchers.IO).launch {
-            println("VM Inside launch")
-//            delay(1000.milliseconds)
-//            val alarm = repository.fetchAlarmById(id)
+    override fun onAlarmDismiss(id: Long) {
+        println("Dismiss alarm $id")
+        val scope = if (viewModelScope.isActive) viewModelScope else CoroutineScope(Dispatchers.IO)
+        scope.launch {
+            require(id != -1L) { "Invalid alarm id in onAlarmDismiss" }
             val alarm = repository.fetchAlarmById(id)
-            println("Alarm to trigger: $alarm")
-            alarmTriggerState.update { alarm }
+            requireNotNull(alarm) { "Alarm null in onAlarmDismiss $id" } // TODO Update message
+            alarmScheduler.cancel(alarm)
+            val updatedAlarm = alarm.copy(isActive = AlarmActive(false))
+            repository.updateAlarm(updatedAlarm)
+            alarms.update {
+                it.toMutableList().apply {
+                    set(indexOf(alarm), updatedAlarm)
+                }
+            }
+            println("Alarm dismissed: ${alarms.value.joinToString()}")
         }
-//        viewModelScope.launch {
-//            println("VM Inside launch")
-////            delay(1000.milliseconds)
-////            val alarm = repository.fetchAlarmById(id)
-//            val alarm = repository.fetchAlarmById(id)
-//            println("Alarm to trigger: $alarm")
-//            alarmTriggerState.update { alarm }
-//        }
+    }
+
+    override fun onAlarmSnooze(id: Long) {
+        println("Snooze alarm $id")
+        val scope = if (viewModelScope.isActive) viewModelScope else CoroutineScope(Dispatchers.IO)
+        scope.launch {
+            require(id != -1L) { "Invalid alarm id in onAlarmSnooze" }
+            val alarm = repository.fetchAlarmById(id)
+            requireNotNull(alarm) { "Alarm null in onAlarmSnooze $id" } // TODO Update message
+
+            val updatedLocalTimeInstant =
+                alarm.localTime.toInstant(TimeZone.currentSystemDefault()).plus(1.minutes)
+            val updatedLocalTime =
+                updatedLocalTimeInstant.toLocalDateTime(TimeZone.currentSystemDefault())
+            val updatedAlarm = alarm.copy(
+                localTime = updatedLocalTime,
+                time = AlarmTime(updatedLocalTime.formatLocalDateTimeToHHMM())
+            )
+
+            alarmScheduler.cancel(alarm)
+            alarmScheduler.schedule(updatedAlarm)
+            repository.updateAlarm(updatedAlarm)
+            alarms.update {
+                it.toMutableList().apply {
+                    set(indexOf(alarm), updatedAlarm)
+                }
+            }
+            println("Alarm snoozed: ${alarms.value.joinToString()}")
+        }
+    }
+
+    override suspend fun getAlarm(id: Long): Alarm? {
+        println("Get alarm $id")
+        return repository.fetchAlarmById(id)
     }
 
     fun resetAlarmTriggerState() {

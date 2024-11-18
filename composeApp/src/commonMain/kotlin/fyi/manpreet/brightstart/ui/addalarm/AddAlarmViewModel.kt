@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import fyi.manpreet.brightstart.data.mapper.constructRepeatDays
+import fyi.manpreet.brightstart.data.mapper.formatLocalDateTimeToHHMM
 import fyi.manpreet.brightstart.data.mapper.getSelectedHourIndex
 import fyi.manpreet.brightstart.data.mapper.getSelectedMinuteIndex
 import fyi.manpreet.brightstart.data.model.Alarm
@@ -249,7 +250,7 @@ class AddAlarmViewModel(
         val currentAlarm = currentAlarm.value
 
         val time =
-            AlarmTime(formatLocalDateTimeToHHMM(currentAlarm.localTime)) // TODO Construct time from localTime
+            AlarmTime(currentAlarm.localTime.formatLocalDateTimeToHHMM()) // TODO Construct time from localTime
         val name = AlarmName(currentAlarm.name.value.ifEmpty { AlarmName("New Alarm") }.toString())
         val ringtoneReference = currentAlarm.ringtoneReference
         val ringtoneName = currentAlarm.ringtoneName
@@ -382,22 +383,6 @@ class AddAlarmViewModel(
                 selectedTime = AlarmTimeSelector.AlarmSelectedTime(hour = hour, minute = minutes)
             )
         }
-    }
-
-    @OptIn(FormatStringsInDatetimeFormats::class)
-    private fun formatLocalDateTimeToHHMM(localDateTime: LocalDateTime): String {
-        val hour = localDateTime.hour
-        val minute = localDateTime.minute
-        val formattedHour = if (hour == 0 || hour == 12) 12 else hour % 12
-        val period = if (hour < 12) "AM" else "PM"
-        return buildString {
-            append(formattedHour.toString().padStart(2, '0'))
-            append(":")
-            append(minute.toString().padStart(2, '0'))
-        }
-//        return localDateTime.format(LocalDateTime.Format {
-//            byUnicodePattern("HH:mm")
-//        })
     }
 
     private fun formatDuration(selectedDateTime: Instant, systemDateTime: Instant): String {

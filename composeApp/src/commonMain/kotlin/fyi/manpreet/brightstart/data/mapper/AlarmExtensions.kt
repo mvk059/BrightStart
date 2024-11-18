@@ -5,6 +5,7 @@ import fyi.manpreet.brightstart.data.model.DaysEnum
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.toLocalDateTime
 
 fun List<AlarmDays>.constructRepeatDays(currentTime: LocalDateTime): String {
@@ -50,4 +51,17 @@ fun Int.getSelectedMinuteIndex(): Int {
         }
     }
     return -1
+}
+
+@OptIn(FormatStringsInDatetimeFormats::class)
+fun LocalDateTime.formatLocalDateTimeToHHMM(): String {
+    val hour = this.hour
+    val minute = this.minute
+    val formattedHour = if (hour == 0 || hour == 12) 12 else hour % 12
+    val period = if (hour < 12) "AM" else "PM"
+    return buildString {
+        append(formattedHour.toString().padStart(2, '0'))
+        append(":")
+        append(minute.toString().padStart(2, '0'))
+    }
 }
