@@ -17,8 +17,7 @@ class AlarmRepositoryImpl(
 
     override suspend fun fetchAlarmById(id: Long): Alarm? {
         val alarmWithDays = localDataSource.fetchAlarmById(id)
-        requireNotNull(alarmWithDays) { "Alarm not found" }
-        return alarmWithDays.toAlarm()
+        return alarmWithDays?.toAlarm()
     }
 
     override suspend fun deleteAlarm(alarm: Alarm) =

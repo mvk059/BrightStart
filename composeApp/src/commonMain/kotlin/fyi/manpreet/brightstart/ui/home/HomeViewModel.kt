@@ -52,7 +52,7 @@ class HomeViewModel(
         scope.launch {
             require(id != -1L) { "Invalid alarm id in onAlarmDismiss" }
             val alarm = repository.fetchAlarmById(id)
-            requireNotNull(alarm) { "Alarm null in onAlarmDismiss $id" } // TODO Update message
+            if (alarm == null) return@launch
             alarmScheduler.cancel(alarm)
             val updatedAlarm = alarm.copy(isActive = AlarmActive(false))
             repository.updateAlarm(updatedAlarm)
@@ -71,7 +71,7 @@ class HomeViewModel(
         scope.launch {
             require(id != -1L) { "Invalid alarm id in onAlarmSnooze" }
             val alarm = repository.fetchAlarmById(id)
-            requireNotNull(alarm) { "Alarm null in onAlarmSnooze $id" } // TODO Update message
+            if (alarm == null) return@launch
 
             val updatedLocalTimeInstant =
                 alarm.localTime.toInstant(TimeZone.currentSystemDefault()).plus(1.minutes)
@@ -121,6 +121,7 @@ class HomeViewModel(
                     val alarmId = alarms.value.firstOrNull { it.id == event.alarm.id }
                     requireNotNull(alarmId) { "Alarm not found" }
                     repository.deleteAlarm(event.alarm)
+                    alarmScheduler.cancel(event.alarm)
                     alarms.update {
                         it.toMutableList().apply {
                             remove(event.alarm)
