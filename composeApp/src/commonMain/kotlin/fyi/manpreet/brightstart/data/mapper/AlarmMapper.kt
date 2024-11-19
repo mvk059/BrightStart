@@ -47,7 +47,7 @@ fun AlarmTable.toAlarm() = Alarm(
     localTime = LocalDateTime.parse(localDateTime),
     time = AlarmTime(time),
     timePeriod =
-    if (timePeriod.lowercase() == TimePeriodValue.AM.name) TimePeriod(TimePeriodValue.AM)
+    if (timePeriod.lowercase() == TimePeriodValue.AM.name.lowercase()) TimePeriod(TimePeriodValue.AM)
     else TimePeriod(TimePeriodValue.PM),
     name = AlarmName(name),
     ringtoneReference = RingtoneReference(ringtoneReference),
