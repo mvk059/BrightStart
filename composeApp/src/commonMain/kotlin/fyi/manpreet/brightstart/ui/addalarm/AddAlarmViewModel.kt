@@ -64,9 +64,13 @@ class AddAlarmViewModel(
     val permissionStatus: StateFlow<PermissionState>
         field = MutableStateFlow(PermissionState.NOT_DETERMINED)
 
+    val toUpdateAlarm: StateFlow<Alarm?>
+        field = MutableStateFlow(null)
+
     override fun onCleared() {
         super.onCleared()
         currentAlarm.update { initCurrentAlarm() }
+        toUpdateAlarm.update { null }
         timeSelector.update { AlarmTimeSelector() }
         onAlarmAdded.update { false }
     }
@@ -76,6 +80,7 @@ class AddAlarmViewModel(
         viewModelScope.launch {
             val alarm = repository.fetchAlarmById(alarmId)
             if (alarm == null) return@launch
+            toUpdateAlarm.update { alarm }
             currentAlarm.update { alarm }
 
             val selectedHourIndex = alarm.localTime.hour.getSelectedHourIndex()
@@ -84,7 +89,7 @@ class AddAlarmViewModel(
             val selectedMinute = Minute(timeSelector.value.minutes[selectedMinuteIndex].value)
             timeSelector.update {
                 it.copy(
-                    selectedHourIndex = selectedHourIndex, //alarm.localTime.hour.getSelectedHourIndex(),
+                    selectedHourIndex = selectedHourIndex,
                     selectedMinuteIndex = selectedMinuteIndex, //alarm.localTime.minute.getSelectedMinuteIndex(),
                     selectedTimePeriodIndex = it.timePeriod.indexOfFirst { timePeriod -> timePeriod.value == alarm.timePeriod.value },
                     selectedTime = AlarmTimeSelector.AlarmSelectedTime(
@@ -283,7 +288,8 @@ class AddAlarmViewModel(
             } else {
                 // Update Alarm
                 repository.updateAlarm(alarm)
-                println("Update Alarm id: ${alarm.id}")
+                println("Update Alarm id: ${alarm.id}, ${toUpdateAlarm.value?.id}")
+                alarmScheduler.cancel(toUpdateAlarm.value!!)
                 alarmScheduler.schedule(alarm)
             }
 
