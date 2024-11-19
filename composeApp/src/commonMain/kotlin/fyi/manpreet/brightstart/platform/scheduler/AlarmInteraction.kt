@@ -6,4 +6,5 @@ interface AlarmInteraction {
     fun onAlarmDismiss(id: Long)
     fun onAlarmSnooze(id: Long)
     suspend fun getAlarm(id: Long): Alarm?
+    suspend fun getAllAlarms(): List<Alarm>
 }

@@ -99,6 +99,10 @@ class HomeViewModel(
         return repository.fetchAlarmById(id)
     }
 
+    override suspend fun getAllAlarms(): List<Alarm> {
+        return repository.fetchAllAlarms()
+    }
+
     fun onEvent(event: HomeEvent) {
         when (event) {
             HomeEvent.FetchAlarms -> {

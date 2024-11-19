@@ -17,6 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.App.Starting">
+
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|mnc|colorMode|density|fontScale|fontWeightAdjustment|keyboard|layoutDirection|locale|mcc|navigation|smallestScreenSize|touchscreen|uiMode"
@@ -30,14 +31,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".AlarmTriggerActivity"
-            android:showOnLockScreen="true"
-            android:turnScreenOn="true"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-<!--        android:screenOrientation="portrait"-->
+            android:showOnLockScreen="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:turnScreenOn="true" />
+        <!--        android:screenOrientation="portrait"-->
+
         <receiver
             android:name=".platform.scheduler.AlarmReceiver"
             android:enabled="true"
@@ -46,7 +49,22 @@
                 <action android:name="fyi.manpreet.brightstart.ALARM_TRIGGER" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".platform.scheduler.AlarmNotificationReceiver" />
+
+        <receiver
+            android:name=".platform.scheduler.AlarmNotificationReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+        <receiver
+            android:name=".platform.scheduler.BootReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
