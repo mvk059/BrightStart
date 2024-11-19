@@ -1,5 +1,6 @@
 package fyi.manpreet.brightstart.ui.home
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,6 +26,7 @@ fun AlarmList(
         modifier = modifier.wrapContentSize()
             .padding(horizontal = 8.dp, vertical = 8.dp),  // Card Outside padding
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
 
         items(

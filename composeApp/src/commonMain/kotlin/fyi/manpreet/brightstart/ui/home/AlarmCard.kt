@@ -33,7 +33,7 @@ fun AlarmCard(
             .fillMaxWidth()
             .wrapContentHeight()
             .clickable { onAlarmClick(alarm) }
-            .padding(horizontal = 0.dp, vertical = 8.dp),
+            .padding(horizontal = 0.dp, vertical = 0.dp),
         shape = RoundedCornerShape(size = 16.dp),
         colors = CardDefaults.cardColors().copy(
             containerColor = Color.White,

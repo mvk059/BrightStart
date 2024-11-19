@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
@@ -85,7 +86,7 @@ private fun DeleteBackground(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color)
+            .background(color = color,  shape = RoundedCornerShape(size = 16.dp))
             .padding(16.dp),
         contentAlignment = Alignment.CenterEnd
     ) {
