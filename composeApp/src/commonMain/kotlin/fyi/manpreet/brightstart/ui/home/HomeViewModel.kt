@@ -99,21 +99,6 @@ class HomeViewModel(
         return repository.fetchAlarmById(id)
     }
 
-    fun resetAlarmTriggerState() {
-        alarmTriggerState.update { null }
-    }
-
-    fun updateRingtoneState(state: Boolean) {
-        println("Ringtone state: $state")
-        ringtonePickerState.update { state }
-    }
-
-    fun updateRingtoneData(data: Pair<String?, String?>?) {
-        println("Ringtone data: $data")
-        ringtonePickerData.update { data }
-        updateRingtoneState(false)
-    }
-
     fun onEvent(event: HomeEvent) {
         when (event) {
             HomeEvent.FetchAlarms -> {
@@ -128,7 +113,7 @@ class HomeViewModel(
 
             is HomeEvent.DeleteAlarm -> {
                 viewModelScope.launch {
-                    println("Delete Before all alarms: ${alarms.value.joinToString()}")
+                    Logger.d("Delete Before all alarms: ${alarms.value.joinToString()}")
                     val alarmId = alarms.value.firstOrNull { it.id == event.alarm.id }
                     requireNotNull(alarmId) { "Alarm not found" }
                     repository.deleteAlarm(event.alarm)
@@ -142,6 +127,21 @@ class HomeViewModel(
 
             is HomeEvent.ToggleAlarm -> toggleAlarm(event.alarm, event.status)
         }
+    }
+
+    fun resetAlarmTriggerState() {
+        alarmTriggerState.update { null }
+    }
+
+    fun updateRingtoneState(state: Boolean) {
+        println("Ringtone state: $state")
+        ringtonePickerState.update { state }
+    }
+
+    fun updateRingtoneData(data: Pair<String?, String?>?) {
+        println("Ringtone data: $data")
+        ringtonePickerData.update { data }
+        updateRingtoneState(false)
     }
 
     fun onStopAlarm(alarm: Alarm) {

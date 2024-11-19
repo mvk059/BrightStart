@@ -1,6 +1,5 @@
 package fyi.manpreet.brightstart.ui.home
 
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import fyi.manpreet.brightstart.data.model.Alarm
+import fyi.manpreet.brightstart.ui.home.items.SwipeToDeleteContainer
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -22,18 +22,26 @@ fun AlarmList(
 ) {
 
     LazyColumn(
-        modifier = modifier.wrapContentSize().padding(horizontal = 8.dp, vertical = 8.dp),  // Card Outside padding
+        modifier = modifier.wrapContentSize()
+            .padding(horizontal = 8.dp, vertical = 8.dp),  // Card Outside padding
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
-        items(alarms) { alarm ->
-            AlarmCard(
-                alarm = alarm,
-                onAlarmClick = onAlarmClick,
-                onAlarmStatusChange = onAlarmStatusChange,
-            )
+        items(
+            items = alarms,
+            key = { alarm -> alarm.id },
+        ) { alarm ->
 
-            Spacer(modifier = Modifier.padding(16.dp))
+            SwipeToDeleteContainer(
+                item = alarm,
+                onDelete = { onAlarmStatusChange(HomeEvent.DeleteAlarm(it)) },
+            ) {
+                AlarmCard(
+                    alarm = alarm,
+                    onAlarmClick = onAlarmClick,
+                    onAlarmStatusChange = onAlarmStatusChange,
+                )
+            }
         }
     }
 }
