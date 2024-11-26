@@ -16,6 +16,8 @@ import fyi.manpreet.brightstart.data.model.Volume
 import fyi.manpreet.brightstart.ui.model.TimePeriod
 import fyi.manpreet.brightstart.ui.model.TimePeriodValue
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 
 fun Alarm.toAlarmTable(): AlarmTable {
     return AlarmTable(
@@ -57,6 +59,13 @@ fun AlarmTable.toAlarm() = Alarm(
     alarmDays = this.toAlarmDays(),
     repeatDays = this.toAlarmDays().constructRepeatDays(LocalDateTime.parse(localDateTime)),
     isActive = AlarmActive(isActive),
+    timeLeftForAlarm = calculateTimeBetweenWithText(
+        selectedDateTime = LocalDateTime.parse(localDateTime)
+            .toInstant(TimeZone.currentSystemDefault()),
+        alarmDays = this.toAlarmDays(),
+        text = ""
+    ),
+    icon = LocalDateTime.parse(localDateTime).getIconForTime()
 )
 
 fun AlarmTable.toAlarmDays(): List<AlarmDays> =

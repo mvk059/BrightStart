@@ -3,11 +3,14 @@ package fyi.manpreet.brightstart.ui.addalarm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import fyi.manpreet.brightstart.data.mapper.calculateTimeBetweenWithText
 import fyi.manpreet.brightstart.data.mapper.constructRepeatDays
 import fyi.manpreet.brightstart.data.mapper.formatLocalDateTimeToHHMM
+import fyi.manpreet.brightstart.data.mapper.getIconForTime
 import fyi.manpreet.brightstart.data.mapper.getSelectedHourIndex
 import fyi.manpreet.brightstart.data.mapper.getSelectedMinuteIndex
 import fyi.manpreet.brightstart.data.model.Alarm
+import fyi.manpreet.brightstart.data.model.Alarm.AlarmDays
 import fyi.manpreet.brightstart.data.model.AlarmActive
 import fyi.manpreet.brightstart.data.model.AlarmDaySelected
 import fyi.manpreet.brightstart.data.model.AlarmDayTitle
@@ -36,15 +39,12 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
-import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.plus
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
-import kotlin.time.DurationUnit
 
 class AddAlarmViewModel(
     private val alarmScheduler: AlarmScheduler,
@@ -160,8 +160,7 @@ class AddAlarmViewModel(
 
     private fun initCurrentAlarm() =
         Alarm(
-            localTime = Clock.System.now()//.plus(10.seconds)
-                .toLocalDateTime(TimeZone.currentSystemDefault()),
+            localTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
             time = AlarmTime(""),
             name = AlarmName("Alarm"), // TODO Get text from strings or use default while adding alarm
             timePeriod = TimePeriod(TimePeriodValue.AM),
@@ -172,6 +171,9 @@ class AddAlarmViewModel(
             alarmDays = initAlarmDays(),
             repeatDays = "",
             isActive = AlarmActive(AlarmConstants.IS_ACTIVE),
+            timeLeftForAlarm = "",
+            icon = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                .getIconForTime()
         )
 
     // TODO Get text from strings
@@ -265,7 +267,7 @@ class AddAlarmViewModel(
 
         val alarm = Alarm(
             id = currentAlarm.id,
-            localTime = currentAlarm.localTime, //Clock.System.now().plus(10.seconds).toLocalDateTime(TimeZone.currentSystemDefault()),
+            localTime = currentAlarm.localTime,
             time = time,
             name = name, // TODO Get text from strings
             timePeriod = currentAlarm.timePeriod,
@@ -276,6 +278,9 @@ class AddAlarmViewModel(
             alarmDays = currentAlarm.alarmDays,
             repeatDays = currentAlarm.alarmDays.constructRepeatDays(currentAlarm.localTime),
             isActive = AlarmActive(true),
+            timeLeftForAlarm = "",
+            icon = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                .getIconForTime()
         )
 
         Logger.d("Alarm schedule start")
@@ -331,6 +336,13 @@ class AddAlarmViewModel(
             else oldItem
         }
         currentAlarm.update { it.copy(alarmDays = alarmDays) }
+        val timeLeftForAlarm = calculateTimeBetweenWithText(
+            selectedDateTime = currentAlarm.value.localTime.toInstant(TimeZone.currentSystemDefault()),
+            systemDateTime = Clock.System.now(),
+            alarmDays = currentAlarm.value.alarmDays
+        )
+        currentAlarm.update { it.copy(timeLeftForAlarm = timeLeftForAlarm) }
+        println("format repeat day: $timeLeftForAlarm")
     }
 
     private fun onPermissionDialogDismiss() {
@@ -354,11 +366,7 @@ class AddAlarmViewModel(
             timePeriod.value == TimePeriodValue.PM -> hour.value + 12
             else -> hour.value
         }
-//            if (timePeriod.value == TimePeriodValue.AM) hour.value
-//            else (hour.value + 12) % 12
-        println("SelectedHour: $selectedHour")
-        val selectedLocalTime =
-            LocalTime(hour = selectedHour, minute = minutes.value, second = 0, nanosecond = 0)
+        val selectedLocalTime = LocalTime(hour = selectedHour, minute = minutes.value)
         // Create selected LocalDateTime
         var selectedLocalDateTime = todayLocalDate.atTime(selectedLocalTime)
         // Create selected Instant with default time zone. This will be converted to UTC time zone
@@ -375,7 +383,11 @@ class AddAlarmViewModel(
         }
 
         // Create formatted string for time left for alarm
-        val timeLeftForAlarm = formatDuration(selectedLocalDateTimeInstant, systemDateTimeInstant)
+        val timeLeftForAlarm = calculateTimeBetweenWithText(
+            selectedDateTime = selectedLocalDateTimeInstant,
+            systemDateTime = systemDateTimeInstant,
+            alarmDays = currentAlarm.value.alarmDays
+        )
         currentAlarm.update {
             it.copy(
                 localTime = selectedLocalDateTime,
@@ -389,29 +401,6 @@ class AddAlarmViewModel(
                 selectedTime = AlarmTimeSelector.AlarmSelectedTime(hour = hour, minute = minutes)
             )
         }
-    }
-
-    private fun formatDuration(selectedDateTime: Instant, systemDateTime: Instant): String {
-        val duration = selectedDateTime.minus(systemDateTime)
-
-        val days = duration.toInt(DurationUnit.DAYS)
-        val hours = duration.toInt(DurationUnit.HOURS) % 24
-        val minutes = duration.toInt(DurationUnit.MINUTES) % 60
-
-        return buildString {
-            append("Alarm in ")
-            if (days > 0) append("${days}d ")
-            if (hours > 0 || days > 0) append("${hours}h ")
-            append("${minutes}min")
-        }.trim()
-    }
-
-    private fun formatTime(selectedDateTime: LocalDateTime): String {
-        val hour = selectedDateTime.hour
-        val minute = selectedDateTime.minute
-        val timePeriod = if (hour < 12) "AM" else "PM"
-        val formattedHour = if (hour > 12) hour - 12 else hour
-        return "$formattedHour:$minute $timePeriod"
     }
 
     companion object {
