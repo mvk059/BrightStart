@@ -26,7 +26,6 @@ fun Landing(
     navController: NavHostController = rememberNavController(),
     homeViewModel: HomeViewModel = koinViewModel(),
 ) {
-
     val ringtoneData = homeViewModel.ringtonePickerData.collectAsStateWithLifecycle()
 
     NavHost(

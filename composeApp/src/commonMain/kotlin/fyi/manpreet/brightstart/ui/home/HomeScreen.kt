@@ -16,6 +16,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import fyi.manpreet.brightstart.data.model.Alarm
 import fyi.manpreet.brightstart.ui.components.empty.EmptyView
+import fyi.manpreet.brightstart.ui.home.items.AlarmTopBarItem
 import kotlinx.coroutines.flow.StateFlow
 import kotlin.Boolean
 
@@ -84,6 +85,7 @@ fun HomeContent(
     val alarms = alarms.collectAsStateWithLifecycle()
 
     Column {
+        AlarmTopBarItem()
         if (alarms.value.isEmpty()) {
             EmptyView()
         } else {

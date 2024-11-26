@@ -11,7 +11,7 @@ fun BrightStartTheme(
 ) {
     val colors = if (darkTheme) DarkColorScheme else LightColorScheme
     MaterialTheme(
-        colorScheme = colors,
+        colorScheme = LightColorScheme,
         typography = Typography(),
         shapes = Shapes,
         content = content,

@@ -23,7 +23,10 @@ fun AlarmTimeRemainingItem(
             .padding(horizontal = 16.dp),
     ) {
 
-        Text("Time remaining")
+        Text(
+            text = alarm.timeLeftForAlarm,
+            style = MaterialTheme.typography.bodySmall,
+        )
     }
 
 }

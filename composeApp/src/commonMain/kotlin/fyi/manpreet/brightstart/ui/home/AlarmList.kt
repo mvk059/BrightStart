@@ -24,7 +24,7 @@ fun AlarmList(
 
     LazyColumn(
         modifier = modifier.wrapContentSize()
-            .padding(horizontal = 8.dp, vertical = 8.dp),  // Card Outside padding
+            .padding(horizontal = 24.dp, vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {

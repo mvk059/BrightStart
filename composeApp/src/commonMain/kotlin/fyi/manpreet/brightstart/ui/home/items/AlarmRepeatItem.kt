@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -15,19 +16,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import fyi.manpreet.brightstart.data.model.Alarm
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun AlarmRepeatItem(
     modifier: Modifier = Modifier,
-    alarm: Alarm,
+    repeatDays: String,
+    timeLeftForAlarm: String,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .padding(top = 16.dp),
+            .padding(top = 8.dp),
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -35,15 +36,25 @@ fun AlarmRepeatItem(
         Box(
             modifier = Modifier
                 .background(color = Color.Blue, shape = CircleShape)
-                .size(4.dp)
+                .size(size = 4.dp)
                 .padding(horizontal = 8.dp),
         )
 
         Text(
             modifier = Modifier.padding(start = 8.dp),
-            text = alarm.repeatDays,
+            text = repeatDays,
             style = MaterialTheme.typography.bodySmall.copy(
                 color = Color.Gray,
+            )
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Text(
+            modifier = Modifier.padding(start = 8.dp),
+            text = timeLeftForAlarm,
+            style = MaterialTheme.typography.bodySmall.copy(
+//                color = Color.Gray,
             )
         )
     }

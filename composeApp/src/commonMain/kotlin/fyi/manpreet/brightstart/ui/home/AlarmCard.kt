@@ -33,7 +33,7 @@ fun AlarmCard(
             .fillMaxWidth()
             .wrapContentHeight()
             .clickable { onAlarmClick(alarm) }
-            .padding(horizontal = 0.dp, vertical = 0.dp),
+            .padding(horizontal = 0.dp, vertical = 8.dp),
         shape = RoundedCornerShape(size = 16.dp),
         colors = CardDefaults.cardColors().copy(
             containerColor = Color.White,
@@ -43,11 +43,12 @@ fun AlarmCard(
         Column(
             modifier = Modifier
                 .padding(horizontal = 0.dp, vertical = 0.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
 
             AlarmRepeatItem(
-                alarm = alarm,
+                repeatDays = alarm.repeatDays,
+                timeLeftForAlarm = alarm.timeLeftForAlarm,
             )
 
             // TODO Send only required items
@@ -62,9 +63,9 @@ fun AlarmCard(
 //            )
 
 
-            AlarmTimeRemainingItem(
-                alarm = alarm,
-            )
+//            AlarmTimeRemainingItem(
+//                alarm = alarm,
+//            )
         }
     }
 }

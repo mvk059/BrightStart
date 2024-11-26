@@ -1,10 +1,14 @@
 package fyi.manpreet.brightstart.ui.home.items
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -28,8 +32,9 @@ fun AlarmTimeItem(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .wrapContentHeight()
             .padding(horizontal = 16.dp)
-            .padding(top = 0.dp),
+            .padding(top = 4.dp),
     ) {
 
         Row(
@@ -37,22 +42,33 @@ fun AlarmTimeItem(
         ) {
 
             Text(
-                modifier = Modifier.align(Alignment.Bottom),
+//                modifier = Modifier.align(Alignment.Bottom),
                 text = alarm.time.value,
-                style = MaterialTheme.typography.displayLarge.copy(
+                style = MaterialTheme.typography.displayMedium.copy(
                     letterSpacing = 2.sp
                 ),
             )
 
-            Text(
-                modifier = Modifier
-                    .align(Alignment.Bottom)
-                    .padding(start = 8.dp, bottom = 12.dp),
-                text = alarm.timePeriod.value.name,
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Normal
+            Column(
+                modifier = Modifier.fillMaxHeight().padding(start = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+
+                // TODO Add tint based on theme
+                Icon(
+                    imageVector = alarm.icon,
+                    contentDescription = null,
                 )
-            )
+
+                Text(
+                    modifier = Modifier.padding(start = 0.dp, bottom = 0.dp),
+                    text = alarm.timePeriod.value.name,
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        fontWeight = FontWeight.Normal
+                    )
+                )
+            }
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -63,10 +79,12 @@ fun AlarmTimeItem(
             )
         }
 
+        if (alarm.name.value.isEmpty()) return
+
         Text(
-            modifier = Modifier.padding(start = 8.dp),
+            modifier = Modifier.padding(start = 10.dp, bottom = 8.dp),
             text = alarm.name.value, // TODO add to model
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodySmall
         )
     }
 
