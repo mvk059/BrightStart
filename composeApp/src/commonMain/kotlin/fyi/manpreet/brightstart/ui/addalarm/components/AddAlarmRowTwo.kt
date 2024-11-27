@@ -1,4 +1,4 @@
-package fyi.manpreet.brightstart.ui.addalarm.components.clock.rows
+package fyi.manpreet.brightstart.ui.addalarm.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxScope

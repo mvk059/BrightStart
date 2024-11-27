@@ -21,8 +21,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fyi.manpreet.brightstart.data.model.Alarm
 import fyi.manpreet.brightstart.ui.addalarm.components.clock.Clock
 import fyi.manpreet.brightstart.ui.addalarm.components.clock.ClockRev
-import fyi.manpreet.brightstart.ui.addalarm.components.clock.rows.AddAlarmRowThree
-import fyi.manpreet.brightstart.ui.addalarm.components.clock.rows.AddAlarmRowTwo
+import fyi.manpreet.brightstart.ui.addalarm.components.AddAlarmRowThree
+import fyi.manpreet.brightstart.ui.addalarm.components.AddAlarmRowTwo
 import fyi.manpreet.brightstart.ui.addalarm.components.repeat.AllAlarmRepeat
 import fyi.manpreet.brightstart.ui.model.TimePeriodValue
 import kotlinx.coroutines.flow.StateFlow
