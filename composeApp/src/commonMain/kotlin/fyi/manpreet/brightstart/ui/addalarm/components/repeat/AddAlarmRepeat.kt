@@ -33,9 +33,7 @@ fun AllAlarmRepeat(
     onRepeatUpdate: (AddAlarmEvent) -> Unit,
 ) {
 
-    // TODO Fix chip size
     // TODO Check in landscape
-    // TODO Fix color scheme of chips
     // TODO Logic to handle repeat days text
     Column(
         modifier = modifier,
@@ -68,14 +66,14 @@ private fun RepeatTitleRow(
         Text(
             text = stringResource(Res.string.add_alarm_repeat),
             style = MaterialTheme.typography.labelLarge,
-            color = Color.Black,
+            color = Color.White,
         )
 
         // Have different font styles slightly
         Text(
-            text = repeatTitle.ifEmpty { "Weekdays" },
+            text = repeatTitle,
             style = MaterialTheme.typography.bodyMedium,
-            color = Color.Black,
+            color = Color.White,
         )
     }
 }
@@ -87,7 +85,7 @@ private fun RepeatTileRow(
 ) {
 
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -101,7 +99,7 @@ private fun RepeatTileRow(
                     }
                     .weight(1f)
                     .background(
-                        color = if (item.isSelected.value) Color.Blue else Color.White,
+                        color = if (item.isSelected.value) Color.White else Color.DarkGray,
                         shape = RoundedCornerShape(8.dp),
                     )
                     .wrapContentWidth()
@@ -109,9 +107,9 @@ private fun RepeatTileRow(
             ) {
                 Text(
                     modifier = Modifier
-                        .padding(horizontal = 4.dp, vertical = 16.dp),
+                        .padding(horizontal = 4.dp, vertical = 12.dp),
                     text = item.day.value,
-                    color = if (item.isSelected.value) Color.White else Color.Black,
+                    color = if (item.isSelected.value) Color.Black else Color.White,
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }

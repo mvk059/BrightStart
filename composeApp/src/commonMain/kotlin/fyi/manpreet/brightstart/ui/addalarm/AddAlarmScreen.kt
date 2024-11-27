@@ -1,53 +1,44 @@
 package fyi.manpreet.brightstart.ui.addalarm
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fyi.manpreet.brightstart.data.model.Alarm
-import fyi.manpreet.brightstart.ui.addalarm.components.appbar.AddAlarmAppBar
-import fyi.manpreet.brightstart.ui.addalarm.components.clock.TimePicker
-import fyi.manpreet.brightstart.ui.addalarm.components.name.Name
+import fyi.manpreet.brightstart.ui.addalarm.components.clock.Clock
+import fyi.manpreet.brightstart.ui.addalarm.components.clock.ClockRev
+import fyi.manpreet.brightstart.ui.addalarm.components.clock.rows.AddAlarmRowThree
+import fyi.manpreet.brightstart.ui.addalarm.components.clock.rows.AddAlarmRowTwo
 import fyi.manpreet.brightstart.ui.addalarm.components.repeat.AllAlarmRepeat
-import fyi.manpreet.brightstart.ui.addalarm.components.sound.Sound
-import fyi.manpreet.brightstart.ui.addalarm.components.vibrate.Vibrate
-import fyi.manpreet.brightstart.ui.addalarm.components.volume.Volume
-import fyi.manpreet.brightstart.ui.model.AlarmTimeSelector
+import fyi.manpreet.brightstart.ui.model.TimePeriodValue
 import kotlinx.coroutines.flow.StateFlow
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /**
  *
- * Time Picker: Takes 70% of the screen
  * TODO Use device locale to determine 12/24 hour format
- * TODO Sound, Volume, Vibrate, Repeat, Name, Time left for alarm
- * TODO Close and Save button at bottom left and right respectively
  * TODO Handle status bar and navigation bar background colors
- * TODO Set font
- * TODO Setup theme
- * TODO Set text size/style based on theme for all text
- * TODO Keep weight of both the rows same in terms of height as well
  */
 @Composable
 fun AddAlarm(
     modifier: Modifier = Modifier,
     alarm: StateFlow<Alarm>,
-    alarmTimeSelector: StateFlow<AlarmTimeSelector>,
     onHourIndexUpdate: (Int) -> Unit,
     onMinuteIndexUpdate: (Int) -> Unit,
-    onTimePeriodIndexUpdate: (Int) -> Unit,
-    onTimeScrollingUpdate: () -> Unit,
-    onVolumeUpdate: (AddAlarmEvent) -> Unit,
+    onTimePeriodIndexUpdate: (TimePeriodValue) -> Unit,
     onVibrateUpdate: (AddAlarmEvent) -> Unit,
     onNameUpdate: (AddAlarmEvent) -> Unit,
     onRepeatUpdate: (AddAlarmEvent) -> Unit,
@@ -56,88 +47,111 @@ fun AddAlarm(
     onCloseClick: () -> Unit,
 ) {
 
-    // TODO Add scaffold for app bar?
-    // TODO Adjust weight accordingly
-    // TODO Increase padding of each component slightly for better clickability
-    println("AddAlarmScreen: ${alarm.value}")
-    val alarm = alarm.collectAsStateWithLifecycle()
-    val alarmTimeSelector = alarmTimeSelector.collectAsStateWithLifecycle()
+    val alarmValue = alarm.collectAsStateWithLifecycle().value
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = Color(0xFFf5f5f5))
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+            .background(color = Color(0xFF1E1E26))
     ) {
 
-        AddAlarmAppBar(
-            alarm = alarm.value,
-            onSaveClick = onAddClick,
-            onCloseClick = onCloseClick,
-        )
-
-        TimePicker(
-            alarmTimeSelector = alarmTimeSelector.value,
-            timeLeftForAlarm = alarm.value.timeLeftForAlarm,
-            onHourIndexUpdate = onHourIndexUpdate,
-            onMinuteIndexUpdate = onMinuteIndexUpdate,
-            onTimePeriodIndexUpdate = onTimePeriodIndexUpdate,
-            onTimeScrollingUpdate = onTimeScrollingUpdate,
-        )
-
-        AllAlarmRepeat(
+        Row(
             modifier = Modifier
+                .weight(0.60f)
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp),
-            alarmDays = alarm.value.alarmDays,
-            repeatTitle = alarm.value.repeatDays,
-            onRepeatUpdate = onRepeatUpdate,
-        )
+        ) {
 
-        Name(
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+            ) {
+                Clock(
+                    modifier = Modifier.fillMaxSize(),
+                    hour = alarmValue.time.hour.value,
+                    onHourChange = onHourIndexUpdate,
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+            ) {
+                ClockRev(
+                    modifier = Modifier.fillMaxSize(),
+                    minute = alarmValue.time.minute.value,
+                    onMinuteChange = onMinuteIndexUpdate,
+                )
+            }
+        }
+
+        Column(
             modifier = Modifier
+                .weight(0.40f)
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(top = 16.dp),
-            alarmName = alarm.value.name.value,
-            onNameUpdate = onNameUpdate,
-        )
+        ) {
 
-        Sound(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(top = 16.dp),
-            alarmName = alarm.value.ringtoneName.value,
-            openRingtonePicker = openRingtonePicker,
-        )
+            Box(modifier = Modifier.fillMaxWidth()) {
+                AllAlarmRepeat(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    alarmDays = alarm.value.alarmDays,
+                    repeatTitle = alarm.value.repeatDays,
+                    onRepeatUpdate = onRepeatUpdate,
+                )
+            }
 
-        Volume(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(top = 16.dp),
-            volumeValue = alarm.value.volume.value,
-            onVolumeUpdate = onVolumeUpdate,
-        )
+            Box(modifier = Modifier.fillMaxWidth()) {
+                AddAlarmRowTwo(
+                    modifier = Modifier.padding(top = 24.dp),
+                    alarm = alarmValue,
+                    openRingtonePicker = openRingtonePicker,
+                    onNameUpdate = onNameUpdate,
+                    onVibrateUpdate = onVibrateUpdate,
+                )
+            }
 
-        Vibrate(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(top = 8.dp),
-            vibrationStatus = alarm.value.vibrationStatus.value,
-            onVibrateUpdate = onVibrateUpdate,
-        )
-    }
-}
-
-@Preview
-@Composable
-fun AddAlarmPreview() {
-    MaterialTheme {
-//        AddAlarm()
+            Box(modifier = Modifier.fillMaxWidth()) {
+                AddAlarmRowThree(
+                    timeLeftForAlarm = alarmValue.timeLeftForAlarm,
+                    onAddClick = onAddClick,
+                    onCloseClick = onCloseClick
+                )
+            }
+        }
     }
 
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 24.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        TimePeriodValue.entries.forEachIndexed { index, periodValue ->
+            // TODO Animate size change on selection.
+            Text(
+                modifier = Modifier
+                    .clickable { onTimePeriodIndexUpdate(if (index == 0) TimePeriodValue.AM else TimePeriodValue.PM) }
+                    .padding(horizontal = 16.dp),
+                text = periodValue.name,
+                color = if (alarmValue.timePeriod.value == periodValue) Color.LightGray else Color.DarkGray,
+            )
+        }
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = alarmValue.time.value,
+            modifier = Modifier.align(Alignment.Center).padding(top = 24.dp),
+            style = MaterialTheme.typography.displaySmall,
+            color = Color.White
+        )
+
+    }
 }

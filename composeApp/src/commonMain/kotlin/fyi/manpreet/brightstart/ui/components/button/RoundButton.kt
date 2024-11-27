@@ -1,7 +1,7 @@
 package fyi.manpreet.brightstart.ui.components.button
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -21,7 +22,7 @@ fun RoundButton(
 
     IconButton(
         modifier = modifier
-            .fillMaxSize()
+            .size(72.dp)
             .background(Color(0xFF36363D), CircleShape),
         onClick = onClick,
     ) {

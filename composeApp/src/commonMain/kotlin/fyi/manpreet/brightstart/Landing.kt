@@ -75,12 +75,9 @@ fun Landing(
 
             AddAlarm(
                 alarm = viewModel.currentAlarm,
-                alarmTimeSelector = viewModel.timeSelector,
                 onHourIndexUpdate = viewModel::onHourIndexUpdate,
                 onMinuteIndexUpdate = viewModel::onMinuteIndexUpdate,
                 onTimePeriodIndexUpdate = viewModel::onTimePeriodIndexUpdate,
-                onTimeScrollingUpdate = viewModel::onTimeScrollingUpdate,
-                onVolumeUpdate = viewModel::onEvent,
                 onVibrateUpdate = viewModel::onEvent,
                 onNameUpdate = viewModel::onEvent,
                 onRepeatUpdate = viewModel::onEvent,
