@@ -2,6 +2,7 @@ package fyi.manpreet.brightstart
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Bundle
@@ -17,13 +18,12 @@ import fyi.manpreet.brightstart.ui.home.HomeViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import kotlin.getValue
 
 class MainActivity : ComponentActivity(), KoinComponent {
 
     private val sharedViewModel: HomeViewModel by viewModel()
 
-    val ringtoneContract = registerForActivityResult(
+    private val ringtoneContract = registerForActivityResult(
         contract = RingtoneContract(this),
         callback = { result ->
             sharedViewModel.updateRingtoneData(result?.first.toString() to result?.second)
@@ -34,6 +34,11 @@ class MainActivity : ComponentActivity(), KoinComponent {
         super.onCreate(savedInstanceState)
         get<MainActivityUseCase>().setActivity(this)
 
+        window.apply {
+            // Set the status bar color
+            statusBarColor = Color.parseColor("#FF1E1E26")
+
+        }
         installSplashScreen()
         setContent {
 
