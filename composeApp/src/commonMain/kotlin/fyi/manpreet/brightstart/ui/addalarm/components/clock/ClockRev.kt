@@ -165,14 +165,14 @@ fun ClockRev(
                 fontWeight = FontWeight.Bold
             )
         )
-        drawText(
-            textLayoutResult = selectedMinuteText,
-            topLeft = Offset(
-                circleCenter.x - selectedMinuteText.size.width / 2,
-                circleCenter.y - selectedMinuteText.size.height / 2
-            ),
-            color = Color.Companion.Cyan,
-        )
+//        drawText(
+//            textLayoutResult = selectedMinuteText,
+//            topLeft = Offset(
+//                circleCenter.x - selectedMinuteText.size.width / 2,
+//                circleCenter.y - selectedMinuteText.size.height / 2
+//            ),
+//            color = Color.Companion.Cyan,
+//        )
 
         // Draw indicator on the left side
         val middleLeft = Offset(

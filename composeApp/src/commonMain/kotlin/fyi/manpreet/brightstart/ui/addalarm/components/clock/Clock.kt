@@ -175,14 +175,14 @@ fun Clock(
                 fontWeight = FontWeight.Bold
             )
         )
-        drawText(
-            textLayoutResult = selectedHourText,
-            topLeft = Offset(
-                circleCenter.x - selectedHourText.size.width / 2,
-                circleCenter.y - selectedHourText.size.height / 2
-            ),
-            color = Color.Cyan,
-        )
+//        drawText(
+//            textLayoutResult = selectedHourText,
+//            topLeft = Offset(
+//                circleCenter.x - selectedHourText.size.width / 2,
+//                circleCenter.y - selectedHourText.size.height / 2
+//            ),
+//            color = Color.Cyan,
+//        )
 
         // Draw indicator on the right side
         val middleRight = Offset(
