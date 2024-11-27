@@ -74,8 +74,12 @@ class AddAlarmViewModel(
         if (toUpdateAlarm != null) return
         viewModelScope.launch {
             val alarm = repository.fetchAlarmById(alarmId) ?: return@launch
-            toUpdateAlarm = alarm
-            _currentAlarm.update { alarm }
+            val timeLeftForAlarm = calculateTimeBetweenWithText(
+                selectedDateTime = alarm.localTime.toInstant(TimeZone.currentSystemDefault()),
+                alarmDays = alarm.alarmDays,
+            )
+            toUpdateAlarm = alarm.copy(timeLeftForAlarm = timeLeftForAlarm)
+            _currentAlarm.update { alarm.copy(timeLeftForAlarm = timeLeftForAlarm) }
         }
     }
 
@@ -109,7 +113,7 @@ class AddAlarmViewModel(
         onTimeScrollingUpdate()
     }
 
-    fun onTimeScrollingUpdate() {
+    private fun onTimeScrollingUpdate() {
         onTimeSelectionUpdate(
             hour = _currentAlarm.value.time.hour,
             minutes = _currentAlarm.value.time.minute,

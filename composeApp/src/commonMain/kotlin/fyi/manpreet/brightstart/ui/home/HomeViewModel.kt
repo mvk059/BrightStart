@@ -55,7 +55,7 @@ class HomeViewModel(
             require(id != -1L) { "Invalid alarm id in onAlarmDismiss" }
             val alarm = repository.fetchAlarmById(id) ?: return@launch
             alarmScheduler.cancel(alarm)
-            val updatedAlarm = alarm.copy(isActive = AlarmActive(false))
+            val updatedAlarm = alarm.copy(isActive = AlarmActive(false), timeLeftForAlarm = "")
             repository.updateAlarm(updatedAlarm)
             _alarms.update {
                 it.map { current ->
