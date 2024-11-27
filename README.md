@@ -37,6 +37,7 @@
 - **Tests**: Add tests.
 - **24-Hour Format Support**: Add support for 24-hour time format.
 - **Enhanced UI/UX**: Improve the user interface for better user experience.
+- **Theming**: Improve theming and add support for light mode
 - **Improve Negative Flows**: Find and fix bugs.
 
 ## 🛠️ Contribution Guidelines
