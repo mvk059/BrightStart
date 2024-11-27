@@ -65,12 +65,14 @@ fun AlarmTable.toAlarm() = Alarm(
     alarmDays = this.toAlarmDays(),
     repeatDays = this.toAlarmDays().constructRepeatDays(LocalDateTime.parse(localDateTime)),
     isActive = AlarmActive(isActive),
-    timeLeftForAlarm = calculateTimeBetweenWithText(
-        selectedDateTime = LocalDateTime.parse(localDateTime)
-            .toInstant(TimeZone.currentSystemDefault()),
-        alarmDays = this.toAlarmDays(),
-        text = ""
-    ),
+    timeLeftForAlarm = if (isActive) {
+        calculateTimeBetweenWithText(
+            selectedDateTime = LocalDateTime.parse(localDateTime)
+                .toInstant(TimeZone.currentSystemDefault()),
+            alarmDays = this.toAlarmDays(),
+            text = ""
+        )
+    } else "",
     icon = LocalDateTime.parse(localDateTime).getIconForTime()
 )
 
