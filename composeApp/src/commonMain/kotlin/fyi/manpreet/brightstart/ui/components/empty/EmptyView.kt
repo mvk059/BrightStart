@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import brightstart.composeapp.generated.resources.Res
@@ -29,13 +30,16 @@ fun EmptyView(
     ) {
 
         Icon(
-            imageVector = ClockIcon,    // TODO Update icon
+            imageVector = ClockIcon,
             contentDescription = null,
+            tint = Color.White,
         )
 
         Text(
             text = stringResource(Res.string.alarm_empty),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.White,
         )
     }
 }
