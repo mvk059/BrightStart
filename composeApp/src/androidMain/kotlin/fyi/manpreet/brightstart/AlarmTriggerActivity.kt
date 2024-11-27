@@ -10,21 +10,25 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement.Center
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import fyi.manpreet.brightstart.data.model.Alarm
 import fyi.manpreet.brightstart.platform.scheduler.AlarmConstants
 import fyi.manpreet.brightstart.platform.scheduler.AlarmInteraction
 import org.koin.java.KoinJavaComponent
-import kotlin.getValue
 
 // TODO Decide what to do on onResume, onStop
 class AlarmTriggerActivity : ComponentActivity() {
@@ -47,38 +51,54 @@ class AlarmTriggerActivity : ComponentActivity() {
             }
 
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color(0xFF1E1E26)),
                 horizontalAlignment = CenterHorizontally,
-                verticalArrangement = Center,
+                verticalArrangement = Arrangement.Center,
             ) {
 
                 Text(
                     text = "${alarmState.value?.time?.value}",
+                    style = MaterialTheme.typography.displayMedium,
+                    color = Color.White,
                 )
 
                 Text(
-                    text = "${alarmState.value?.name?.value}"
+                    text = "${alarmState.value?.name?.value}",
+                    style = MaterialTheme.typography.displaySmall,
+                    color = Color.White,
                 )
 
                 Button(
+                    modifier = Modifier.padding(top = 24.dp),
                     onClick = {
                         alarmInteraction.onAlarmDismiss(id)
                         notificationManager.cancel(id.toInt())
                         finish()
                     },
                     content = {
-                        Text("Turn Off")
+                        Text(
+                            text = "Turn Off",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = Color.White,
+                        )
                     }
                 )
 
                 Button(
+                    modifier = Modifier.padding(top = 24.dp),
                     onClick = {
                         alarmInteraction.onAlarmSnooze(id)
                         notificationManager.cancel(id.toInt())
                         finish()
                     },
                     content = {
-                        Text("Snooze for 5 minutes")
+                        Text(
+                            text = "Snooze for 5 minutes",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = Color.White,
+                        )
                     }
                 )
             }
@@ -90,7 +110,7 @@ class AlarmTriggerActivity : ComponentActivity() {
         turnScreenOffAndKeyguardOn()
     }
 
-    fun Activity.turnScreenOnAndKeyguardOff() {
+    private fun Activity.turnScreenOnAndKeyguardOff() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
@@ -104,26 +124,28 @@ class AlarmTriggerActivity : ComponentActivity() {
         }
 
         with(getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager) {
-            requestDismissKeyguard(this@turnScreenOnAndKeyguardOff, object : KeyguardDismissCallback() {
-                override fun onDismissError() {
-                    super.onDismissError()
-                    println("onDismissError")
-                }
+            requestDismissKeyguard(
+                this@turnScreenOnAndKeyguardOff,
+                object : KeyguardDismissCallback() {
+                    override fun onDismissError() {
+                        super.onDismissError()
+                        println("onDismissError")
+                    }
 
-                override fun onDismissSucceeded() {
-                    super.onDismissSucceeded()
-                    println("onDismissSucceeded")
-                }
+                    override fun onDismissSucceeded() {
+                        super.onDismissSucceeded()
+                        println("onDismissSucceeded")
+                    }
 
-                override fun onDismissCancelled() {
-                    super.onDismissCancelled()
-                    println("onDismissCancelled")
-                }
-            })
+                    override fun onDismissCancelled() {
+                        super.onDismissCancelled()
+                        println("onDismissCancelled")
+                    }
+                })
         }
     }
 
-    fun Activity.turnScreenOffAndKeyguardOn() {
+    private fun Activity.turnScreenOffAndKeyguardOn() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(false)
             setTurnScreenOn(false)
