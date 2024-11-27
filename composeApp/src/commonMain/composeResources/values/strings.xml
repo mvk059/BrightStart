@@ -9,7 +9,7 @@
     <string name="add_alarm_vibrate">Vibrate</string>
     <string name="add_alarm_sound">Sound</string>
     <string name="add_alarm_volume">Volume</string>
-    <string name="add_alarm_name">Alarm Name</string>
+    <string name="add_alarm_name">Label</string>
     <string name="add_alarm_name_default">Alarm</string>
     <string name="add_alarm_save">Save</string>
     <string name="add_alarm_update">Update</string>
