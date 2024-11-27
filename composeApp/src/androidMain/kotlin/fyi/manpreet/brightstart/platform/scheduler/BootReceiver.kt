@@ -17,17 +17,13 @@ class BootReceiver : BroadcastReceiver(), KoinComponent {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent?.action == Intent.ACTION_BOOT_COMPLETED || intent?.action == Intent.ACTION_MY_PACKAGE_REPLACED) {
-            println("BootReceiver: Boot completed")
             val scope = CoroutineScope(Dispatchers.IO)
             scope.launch {
                 val alarms = alarmInteraction.getAllAlarms()
                 alarms.forEach { alarm ->
-                    println("Rescheduling alarm: $alarm")
                     alarmScheduler.schedule(alarm)
                 }
             }
-        } else {
-            println("BootReceiver: Boot not completed")
         }
     }
 }

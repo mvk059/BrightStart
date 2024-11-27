@@ -4,17 +4,11 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import fyi.manpreet.brightstart.data.mapper.calculateNextAlarmTime
 import fyi.manpreet.brightstart.data.model.Alarm
-import fyi.manpreet.brightstart.data.model.DaysEnum
-import kotlinx.datetime.Clock
-import kotlinx.datetime.DatePeriod
-import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atTime
-import kotlinx.datetime.plus
 import kotlinx.datetime.toInstant
-import kotlinx.datetime.toLocalDateTime
 
 actual class AlarmSchedulerImpl(
     private val context: Context,
@@ -22,22 +16,13 @@ actual class AlarmSchedulerImpl(
 
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
+    // TODO Handle snooze with repeat days
     actual override fun schedule(alarm: Alarm) {
-
-        val intent = Intent(context, AlarmReceiver::class.java).apply {
-            putExtra("ALARM_ID", alarm.id)
-            putExtra("ALARM_NAME", alarm.name.value)
-            putExtra("RINGTONE_REF", alarm.ringtoneReference.value)
-            putExtra("RINGTONE_NAME", alarm.ringtoneName.value)
-            action = "fyi.manpreet.brightstart.ALARM_TRIGGER"
-        }
-        println("Ringtone Ref impl: , ${alarm.ringtoneReference.value}")
-        println("schedule Alarm: ${alarm.id}")
-
         val idsTime = alarm.getIdsAndTime()
         println("calculateNext IDs: ${idsTime.joinToString()}")
+
         idsTime.forEach { (id, time) ->
-            val pendingIntent = createPendingIntent(intent, id)
+            val pendingIntent = createPendingIntent(createIntent(alarm, id), id)
             alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
                 time.toInstant(TimeZone.currentSystemDefault()).epochSeconds * 1000, // System.currentTimeMillis() + 10 * 1000,
@@ -66,41 +51,17 @@ actual class AlarmSchedulerImpl(
         // Alarm is scheduled for specific days
         return this.alarmDays
             .filter { it.isSelected.value }
-            .map { "${this.id}-${it.id.name}".hashCode() to calculateNextAlarmTime(this, it) }
-    }
-
-    private fun calculateNextAlarmTime(alarm: Alarm, days: Alarm.AlarmDays): LocalDateTime {
-        // Alarm is scheduled for specific days
-        val currentDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        val targetDayOfWeek = days.toDayOfWeek()
-
-        // Extract hour and minute from alarm's localTime
-        val alarmHour = alarm.localTime.hour
-        val alarmMinute = alarm.localTime.minute
-
-        // Calculate next occurrence of the specific day within the week
-        val nextAlarmDateTime = if (currentDateTime.dayOfWeek.ordinal <= targetDayOfWeek.ordinal) {
-            // If target day is today or in the future this week
-            val days = targetDayOfWeek.ordinal - currentDateTime.dayOfWeek.ordinal
-            currentDateTime.date.plus(DatePeriod(days = days)).atTime(alarmHour, alarmMinute)
-        } else {
-            // If target day is in the next week
-            val days = 7 - currentDateTime.dayOfWeek.ordinal + targetDayOfWeek.ordinal
-            currentDateTime.date.plus(DatePeriod(days = days)).atTime(alarmHour, alarmMinute)
-        }
-
-        println("calculateNextAlarmTime Next: $nextAlarmDateTime")
-        return nextAlarmDateTime
+            .map { "${this.id}-${it.id.name}".hashCode() to this.localTime.calculateNextAlarmTime(it) }
     }
 
     private fun createIntent(alarm: Alarm, uniqueId: Int): Intent {
         return Intent(context, AlarmReceiver::class.java).apply {
-            putExtra("ALARM_ID", alarm.id)
-            putExtra("ALARM_NAME", alarm.name.value)
-            putExtra("RINGTONE_REF", alarm.ringtoneReference.value)
-            putExtra("RINGTONE_NAME", alarm.ringtoneName.value)
-            putExtra("UNIQUE_ID", uniqueId)
-            action = "fyi.manpreet.brightstart.ALARM_TRIGGER"
+            putExtra(AlarmConstants.ALARM_ID, alarm.id)
+            putExtra(AlarmConstants.ALARM_NAME, alarm.name.value)
+            putExtra(AlarmConstants.RINGTONE_REF, alarm.ringtoneReference.value)
+            putExtra(AlarmConstants.RINGTONE_NAME, alarm.ringtoneName.value)
+            putExtra(AlarmConstants.UNIQUE_ID, uniqueId)
+            action = AlarmConstants.ALARM_ACTION
         }
     }
 
@@ -112,17 +73,4 @@ actual class AlarmSchedulerImpl(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
     }
-
-    fun Alarm.AlarmDays.toDayOfWeek(): DayOfWeek {
-        return when (this.id) {
-            DaysEnum.MONDAY -> DayOfWeek.MONDAY
-            DaysEnum.TUESDAY -> DayOfWeek.TUESDAY
-            DaysEnum.WEDNESDAY -> DayOfWeek.WEDNESDAY
-            DaysEnum.THURSDAY -> DayOfWeek.THURSDAY
-            DaysEnum.FRIDAY -> DayOfWeek.FRIDAY
-            DaysEnum.SATURDAY -> DayOfWeek.SATURDAY
-            DaysEnum.SUNDAY -> DayOfWeek.SUNDAY
-        }
-    }
-
 }
