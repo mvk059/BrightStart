@@ -3,6 +3,7 @@ package fyi.manpreet.brightstart.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import fyi.manpreet.brightstart.data.mapper.calculateTimeBetweenWithText
 import fyi.manpreet.brightstart.data.mapper.formatLocalDateTimeToHHMM
 import fyi.manpreet.brightstart.data.model.Alarm
 import fyi.manpreet.brightstart.data.model.AlarmActive
@@ -156,7 +157,17 @@ class HomeViewModel(
 
             val updatedAlarms = _alarms.value.map { currentAlarm ->
                 if (alarm == currentAlarm) {
-                    val updatedAlarm = currentAlarm.copy(isActive = AlarmActive(status))
+                    val timeLeftForAlarm =
+                        if (status) calculateTimeBetweenWithText(
+                            selectedDateTime = currentAlarm.localTime.toInstant(TimeZone.currentSystemDefault()),
+                            alarmDays = currentAlarm.alarmDays,
+                            text = ""
+                        )
+                        else ""
+                    val updatedAlarm = currentAlarm.copy(
+                        isActive = AlarmActive(status),
+                        timeLeftForAlarm = timeLeftForAlarm
+                    )
                     repository.updateAlarm(updatedAlarm)
                     updatedAlarm
                 } else {
