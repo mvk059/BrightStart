@@ -35,7 +35,7 @@ fun AlarmRepeatItem(
 
         Box(
             modifier = Modifier
-                .background(color = Color.Blue, shape = CircleShape)
+                .background(color = Color.White, shape = CircleShape)
                 .size(size = 4.dp)
                 .padding(horizontal = 8.dp),
         )
@@ -44,7 +44,7 @@ fun AlarmRepeatItem(
             modifier = Modifier.padding(start = 8.dp),
             text = repeatDays,
             style = MaterialTheme.typography.bodySmall.copy(
-                color = Color.Gray,
+                color = Color.LightGray,
             )
         )
 
@@ -54,7 +54,7 @@ fun AlarmRepeatItem(
             modifier = Modifier.padding(start = 8.dp),
             text = timeLeftForAlarm,
             style = MaterialTheme.typography.bodySmall.copy(
-//                color = Color.Gray,
+                color = Color.LightGray,
             )
         )
     }

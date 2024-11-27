@@ -36,7 +36,7 @@ fun AlarmCard(
             .padding(horizontal = 0.dp, vertical = 8.dp),
         shape = RoundedCornerShape(size = 16.dp),
         colors = CardDefaults.cardColors().copy(
-            containerColor = Color.White,
+            containerColor = Color(0xFF36363d),
         )
     ) {
 

@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,6 +48,7 @@ fun AlarmTimeItem(
                 style = MaterialTheme.typography.displayMedium.copy(
                     letterSpacing = 2.sp
                 ),
+                color = Color.White
             )
 
             Column(
@@ -59,6 +61,7 @@ fun AlarmTimeItem(
                 Icon(
                     imageVector = alarm.icon,
                     contentDescription = null,
+                    tint = Color.White
                 )
 
                 Text(
@@ -66,7 +69,8 @@ fun AlarmTimeItem(
                     text = alarm.timePeriod.value.name,
                     style = MaterialTheme.typography.titleSmall.copy(
                         fontWeight = FontWeight.Normal
-                    )
+                    ),
+                    color = Color.White
                 )
             }
 
@@ -84,7 +88,8 @@ fun AlarmTimeItem(
         Text(
             modifier = Modifier.padding(start = 10.dp, bottom = 8.dp),
             text = alarm.name.value, // TODO add to model
-            style = MaterialTheme.typography.bodySmall
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.LightGray
         )
     }
 

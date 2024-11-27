@@ -13,7 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import brightstart.composeapp.generated.resources.Res
+import brightstart.composeapp.generated.resources.app_name
 import fyi.manpreet.brightstart.ui.home.items.shape.TopBarMiniShape
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -27,14 +30,15 @@ fun AlarmTopBarItem(
             modifier = modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .background(color = Color.White)
+                .background(color = Color(0xFF36363d))
                 .padding(vertical = 16.dp),
         ) {
 
             Text(
                 modifier = Modifier.padding(start = 16.dp),
-                text = "Bright Start",
+                text = stringResource(Res.string.app_name),
                 style = MaterialTheme.typography.titleMedium,
+                color = Color.White,
             )
         }
 
@@ -42,7 +46,7 @@ fun AlarmTopBarItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(36.dp)
-                .background(color = Color.White, shape = TopBarMiniShape())
+                .background(color = Color(0xFF36363d), shape = TopBarMiniShape())
         )
     }
 }

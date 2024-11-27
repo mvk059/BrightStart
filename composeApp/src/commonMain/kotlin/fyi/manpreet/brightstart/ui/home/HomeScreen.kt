@@ -62,7 +62,7 @@ fun HomeScreen(
     ) {
 
         Box(
-            modifier = modifier.fillMaxSize().background(Color(0xFFf5f5f5))
+            modifier = modifier.fillMaxSize().background(Color(0xFF1E1E26)) //0xFFf5f5f5))
         ) {
             HomeContent(
                 alarms = alarms,
