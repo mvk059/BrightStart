@@ -93,12 +93,17 @@ fun LocalDateTime.calculateNextAlarmTime(days: AlarmDays): LocalDateTime {
 
     // Calculate next occurrence of the specific day within the week
     val nextAlarmDateTime =
-        if (currentDateTime.dayOfWeek.ordinal <= targetDayOfWeek.ordinal && (currentHour < alarmHour || (currentHour == alarmHour && currentMinute < alarmMinute))) {
-            // If target day is today or in the future this week
+        if (currentDateTime.dayOfWeek.ordinal == targetDayOfWeek.ordinal && (currentHour < alarmHour || (currentHour == alarmHour && currentMinute < alarmMinute))) {
+            // If target day is today
+            val days = targetDayOfWeek.ordinal - currentDateTime.dayOfWeek.ordinal
+            currentDateTime.date.plus(DatePeriod(days = days)).atTime(alarmHour, alarmMinute)
+        }
+        else if (currentDateTime.dayOfWeek.ordinal < targetDayOfWeek.ordinal) { // && (currentHour < alarmHour || (currentHour == alarmHour && currentMinute < alarmMinute))) {
+            // If target day is in this week but in past
             val days = targetDayOfWeek.ordinal - currentDateTime.dayOfWeek.ordinal
             currentDateTime.date.plus(DatePeriod(days = days)).atTime(alarmHour, alarmMinute)
         } else {
-            // If target day is in the next week
+            // If target day is in this week but in future
             val days = 7 - currentDateTime.dayOfWeek.ordinal + targetDayOfWeek.ordinal
             currentDateTime.date.plus(DatePeriod(days = days)).atTime(alarmHour, alarmMinute)
         }
