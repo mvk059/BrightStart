@@ -2,8 +2,8 @@
 <resources>
     
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">#4664FF</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_alarm</item>
+        <item name="windowSplashScreenBackground">#FF1E1E26</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launch</item>
         <item name="postSplashScreenTheme">@android:style/Theme.Material.Light.NoActionBar</item>
     </style>
     
