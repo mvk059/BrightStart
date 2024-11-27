@@ -13,6 +13,8 @@ import fyi.manpreet.brightstart.data.model.RingtoneName
 import fyi.manpreet.brightstart.data.model.RingtoneReference
 import fyi.manpreet.brightstart.data.model.VibrationStatus
 import fyi.manpreet.brightstart.data.model.Volume
+import fyi.manpreet.brightstart.ui.model.Hour
+import fyi.manpreet.brightstart.ui.model.Minute
 import fyi.manpreet.brightstart.ui.model.TimePeriod
 import fyi.manpreet.brightstart.ui.model.TimePeriodValue
 import kotlinx.datetime.LocalDateTime
@@ -47,7 +49,11 @@ fun List<AlarmTable>.toAlarm() =
 fun AlarmTable.toAlarm() = Alarm(
     id = id,
     localTime = LocalDateTime.parse(localDateTime),
-    time = AlarmTime(time),
+    time = AlarmTime(
+        value = time,
+        hour = Hour(LocalDateTime.parse(localDateTime).hour),
+        minute = Minute(LocalDateTime.parse(localDateTime).minute)
+    ),
     timePeriod =
     if (timePeriod.lowercase() == TimePeriodValue.AM.name.lowercase()) TimePeriod(TimePeriodValue.AM)
     else TimePeriod(TimePeriodValue.PM),

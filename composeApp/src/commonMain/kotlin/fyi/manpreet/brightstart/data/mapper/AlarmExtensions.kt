@@ -67,7 +67,6 @@ fun Int.getSelectedMinuteIndex(): Int {
     return -1
 }
 
-@OptIn(FormatStringsInDatetimeFormats::class)
 fun LocalDateTime.formatLocalDateTimeToHHMM(): String {
     val hour = this.hour
     val minute = this.minute

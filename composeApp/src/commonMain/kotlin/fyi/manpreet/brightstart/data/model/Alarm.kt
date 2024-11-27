@@ -1,6 +1,9 @@
 package fyi.manpreet.brightstart.data.model
 
+import androidx.compose.ui.graphics.vector.ImageVector
 import fyi.manpreet.brightstart.data.model.Alarm.AlarmDays
+import fyi.manpreet.brightstart.ui.model.Hour
+import fyi.manpreet.brightstart.ui.model.Minute
 import fyi.manpreet.brightstart.ui.model.TimePeriod
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
@@ -9,7 +12,6 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.Boolean
 import kotlin.jvm.JvmInline
 
-// TODO Create value classes
 data class Alarm(
     val id: Long = INVALID_ID,
     val localTime: LocalDateTime = Clock.System.now()
@@ -24,7 +26,8 @@ data class Alarm(
     val alarmDays: List<AlarmDays>,
     val repeatDays: String,
     val isActive: AlarmActive,
-    val timeLeftForAlarm: String = "",
+    val timeLeftForAlarm: String,
+    val icon: ImageVector,
 ) {
 
     data class AlarmDays(
@@ -38,8 +41,7 @@ data class Alarm(
     }
 }
 
-@JvmInline
-value class AlarmTime(val value: String)
+data class AlarmTime(val value: String, val hour: Hour, val minute: Minute)
 
 @JvmInline
 value class AlarmName(val value: String)
@@ -51,7 +53,7 @@ value class RingtoneReference(val value: String)
 value class RingtoneName(val value: String)
 
 @JvmInline
-value class Volume(/*@IntRange(0, 100)*/ val value: Int) // TODO Add int range
+value class Volume(val value: Int)
 
 @JvmInline
 value class VibrationStatus(val value: Boolean)

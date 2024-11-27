@@ -7,10 +7,7 @@ import fyi.manpreet.brightstart.data.mapper.calculateTimeBetweenWithText
 import fyi.manpreet.brightstart.data.mapper.constructRepeatDays
 import fyi.manpreet.brightstart.data.mapper.formatLocalDateTimeToHHMM
 import fyi.manpreet.brightstart.data.mapper.getIconForTime
-import fyi.manpreet.brightstart.data.mapper.getSelectedHourIndex
-import fyi.manpreet.brightstart.data.mapper.getSelectedMinuteIndex
 import fyi.manpreet.brightstart.data.model.Alarm
-import fyi.manpreet.brightstart.data.model.Alarm.AlarmDays
 import fyi.manpreet.brightstart.data.model.AlarmActive
 import fyi.manpreet.brightstart.data.model.AlarmDaySelected
 import fyi.manpreet.brightstart.data.model.AlarmDayTitle
@@ -27,13 +24,13 @@ import fyi.manpreet.brightstart.platform.permission.PermissionState
 import fyi.manpreet.brightstart.platform.permission.service.PermissionService
 import fyi.manpreet.brightstart.platform.scheduler.AlarmScheduler
 import fyi.manpreet.brightstart.ui.model.AlarmConstants
-import fyi.manpreet.brightstart.ui.model.AlarmTimeSelector
 import fyi.manpreet.brightstart.ui.model.Hour
 import fyi.manpreet.brightstart.ui.model.Minute
 import fyi.manpreet.brightstart.ui.model.TimePeriod
 import fyi.manpreet.brightstart.ui.model.TimePeriodValue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -52,62 +49,31 @@ class AddAlarmViewModel(
     private val repository: AlarmRepository,
 ) : ViewModel() {
 
-    val currentAlarm: StateFlow<Alarm>
-        field = MutableStateFlow(initCurrentAlarm())
+    private val _currentAlarm = MutableStateFlow(initCurrentAlarm())
+    val currentAlarm: StateFlow<Alarm> = _currentAlarm.asStateFlow()
 
-    val timeSelector: StateFlow<AlarmTimeSelector>
-        field = MutableStateFlow(AlarmTimeSelector())
+    private val _onAlarmAdded = MutableStateFlow(false)
+    val onAlarmAdded: StateFlow<Boolean> = _onAlarmAdded.asStateFlow()
 
-    val onAlarmAdded: StateFlow<Boolean>
-        field = MutableStateFlow(false)
+    private val _permissionStatus = MutableStateFlow(PermissionState.NOT_DETERMINED)
+    val permissionStatus: StateFlow<PermissionState> = _permissionStatus.asStateFlow()
 
-    val permissionStatus: StateFlow<PermissionState>
-        field = MutableStateFlow(PermissionState.NOT_DETERMINED)
-
-    val toUpdateAlarm: StateFlow<Alarm?>
-        field = MutableStateFlow(null)
+    private var toUpdateAlarm: Alarm? = null
 
     override fun onCleared() {
         super.onCleared()
-        currentAlarm.update { initCurrentAlarm() }
-        toUpdateAlarm.update { null }
-        timeSelector.update { AlarmTimeSelector() }
-        onAlarmAdded.update { false }
+        _currentAlarm.update { initCurrentAlarm() }
+        toUpdateAlarm = null
+        _onAlarmAdded.update { false }
     }
 
     fun updateCurrentAlarm(alarmId: Long?) {
         if (alarmId == null) return
+        if (toUpdateAlarm != null) return
         viewModelScope.launch {
-            val alarm = repository.fetchAlarmById(alarmId)
-            if (alarm == null) return@launch
-            toUpdateAlarm.update { alarm }
-            currentAlarm.update { alarm }
-
-            val selectedHourIndex = alarm.localTime.hour.getSelectedHourIndex()
-            val selectedMinuteIndex = alarm.localTime.minute.getSelectedMinuteIndex()
-            val selectedHour = Hour(timeSelector.value.hours[selectedHourIndex].value)
-            val selectedMinute = Minute(timeSelector.value.minutes[selectedMinuteIndex].value)
-            timeSelector.update {
-                it.copy(
-                    selectedHourIndex = selectedHourIndex,
-                    selectedMinuteIndex = selectedMinuteIndex, //alarm.localTime.minute.getSelectedMinuteIndex(),
-                    selectedTimePeriodIndex = it.timePeriod.indexOfFirst { timePeriod -> timePeriod.value == alarm.timePeriod.value },
-                    selectedTime = AlarmTimeSelector.AlarmSelectedTime(
-                        hour = selectedHour, //Hour(alarm.localTime.hour),
-                        minute = selectedMinute, //Minute(alarm.localTime.minute),
-                        timePeriod = TimePeriod(alarm.timePeriod.value)
-                    )
-                )
-            }
-            println(
-                """
-        TimePickerView ViewModel updateCurrentAlarm: 
-        hour: ${timeSelector.value.hours[timeSelector.value.selectedHourIndex]}
-        minute: ${timeSelector.value.minutes[timeSelector.value.selectedMinuteIndex]},
-        timePeriod: ${timeSelector.value.timePeriod[timeSelector.value.selectedTimePeriodIndex]},
-        timeLeftForAlarm: ${currentAlarm.value.timeLeftForAlarm}, 
-    """.trimIndent()
-            )
+            val alarm = repository.fetchAlarmById(alarmId) ?: return@launch
+            toUpdateAlarm = alarm
+            _currentAlarm.update { alarm }
         }
     }
 
@@ -125,43 +91,34 @@ class AddAlarmViewModel(
     }
 
     fun onHourIndexUpdate(hour: Int) {
-        timeSelector.update { it.copy(selectedHourIndex = hour) }
+        val time = _currentAlarm.value.time.copy(hour = Hour(hour))
+        _currentAlarm.update { it.copy(time = time) }
+        onTimeScrollingUpdate()
     }
 
     fun onMinuteIndexUpdate(minute: Int) {
-        timeSelector.update { it.copy(selectedMinuteIndex = minute) }
+        val time = _currentAlarm.value.time.copy(minute = Minute(minute))
+        _currentAlarm.update { it.copy(time = time) }
+        onTimeScrollingUpdate()
     }
 
-    fun onTimePeriodIndexUpdate(timePeriod: Int) {
-        timeSelector.update { it.copy(selectedTimePeriodIndex = timePeriod) }
-        onTimeScrollingUpdate() // onTimeScrollingUpdate is not called by default on time period change
+    fun onTimePeriodIndexUpdate(timePeriod: TimePeriodValue) {
+        _currentAlarm.update { it.copy(timePeriod = TimePeriod(timePeriod)) }
+        onTimeScrollingUpdate()
     }
 
     fun onTimeScrollingUpdate() {
-        val hour = timeSelector.value.hours[timeSelector.value.selectedHourIndex]
-        // TODO Handle for 24 hours
-        val minutes = timeSelector.value.minutes[timeSelector.value.selectedMinuteIndex]
-        val timePeriod = timeSelector.value.timePeriod[timeSelector.value.selectedTimePeriodIndex]
-
-        onTimeSelectionUpdate(hour, minutes, timePeriod)
-
-//        val time = timeSelector.value?.let {
-//            var hour = it.hours[it.selectedHourIndex].toInt()
-//            if (!it.is24Hour) {
-//                hour = hour % 12 + if (it.selectedTimeOfDayIndex == 1) 12 else 0
-//            }
-//            TimePickerTime(
-//                hour,
-//                it.minutes[it.selectedMinuteIndex].toInt()
-//            )
-//        }
-//        return time
+        onTimeSelectionUpdate(
+            hour = _currentAlarm.value.time.hour,
+            minutes = _currentAlarm.value.time.minute,
+            timePeriod = _currentAlarm.value.timePeriod
+        )
     }
 
     private fun initCurrentAlarm() =
         Alarm(
             localTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
-            time = AlarmTime(""),
+            time = AlarmTime("03:45", Hour(3), Minute(45)), // TODO Default time
             name = AlarmName("Alarm"), // TODO Get text from strings or use default while adding alarm
             timePeriod = TimePeriod(TimePeriodValue.AM),
             ringtoneReference = RingtoneReference(""),
@@ -232,11 +189,11 @@ class AddAlarmViewModel(
 
     private fun checkPermission() {
         val permissionState = permissionService.checkPermission(Permission.NOTIFICATION)
-        Logger.i(PermissionsTag) { "Permission state: $permissionState" }
+        Logger.i(PERMISSION_TAG) { "Permission state: $permissionState" }
 
         when (permissionState) {
             PermissionState.NOT_DETERMINED -> provideNotificationsPermission()
-            PermissionState.DENIED -> permissionStatus.update { PermissionState.DENIED }
+            PermissionState.DENIED -> _permissionStatus.update { PermissionState.DENIED }
             PermissionState.GRANTED -> addAlarm()
         }
     }
@@ -254,11 +211,15 @@ class AddAlarmViewModel(
 
     private fun addAlarm() {
         Logger.d("Alarm addAlarm")
-        val currentAlarm = currentAlarm.value
+        val currentAlarm = _currentAlarm.value
 
-        val time =
-            AlarmTime(currentAlarm.localTime.formatLocalDateTimeToHHMM()) // TODO Construct time from localTime
-        val name = AlarmName(currentAlarm.name.value.ifEmpty { AlarmName("New Alarm") }.toString())
+        val time = AlarmTime(
+            value = currentAlarm.localTime.formatLocalDateTimeToHHMM(),
+            hour = Hour(currentAlarm.localTime.hour),
+            minute = Minute(currentAlarm.localTime.minute)
+        )
+        val name = AlarmName(currentAlarm.name.value.ifEmpty { AlarmName("New Alarm") }
+            .toString()) // TODO Get text from strings
         val ringtoneReference = currentAlarm.ringtoneReference
         val ringtoneName = currentAlarm.ringtoneName
 
@@ -269,7 +230,7 @@ class AddAlarmViewModel(
             id = currentAlarm.id,
             localTime = currentAlarm.localTime,
             time = time,
-            name = name, // TODO Get text from strings
+            name = name,
             timePeriod = currentAlarm.timePeriod,
             ringtoneReference = ringtoneReference,
             ringtoneName = ringtoneName,
@@ -285,7 +246,7 @@ class AddAlarmViewModel(
 
         Logger.d("Alarm schedule start")
         viewModelScope.launch {
-            if (currentAlarm.id == Alarm.INVALID_ID) {
+            if (_currentAlarm.value.id == Alarm.INVALID_ID) {
                 // Add Alarm
                 val id = repository.insertAlarm(alarm)
                 println("Add Alarm id: $id")
@@ -293,24 +254,22 @@ class AddAlarmViewModel(
             } else {
                 // Update Alarm
                 repository.updateAlarm(alarm)
-                println("Update Alarm id: ${alarm.id}, ${toUpdateAlarm.value?.id}")
-                alarmScheduler.cancel(toUpdateAlarm.value!!)
+                println("Update Alarm id: ${alarm.id}, ${toUpdateAlarm?.id}")
+                alarmScheduler.cancel(toUpdateAlarm!!)
                 alarmScheduler.schedule(alarm)
             }
 
         }
 
-        onAlarmAdded.update { true }
+        _onAlarmAdded.update { true }
     }
 
     private fun onSoundUpdate(data: Pair<String?, String?>) {
         val ringtoneReference = data.first
         val ringtoneName = data.second
-        requireNotNull(ringtoneReference) { "Ringtone Reference is null" }
-        requireNotNull(ringtoneName) { "Ringtone Name is null" }
-        // TODO Handle ringtone being null when cancelled
+        if (ringtoneReference == null || ringtoneName == null) return
 
-        currentAlarm.update {
+        _currentAlarm.update {
             it.copy(
                 ringtoneReference = RingtoneReference(ringtoneReference),
                 ringtoneName = RingtoneName(ringtoneName)
@@ -319,34 +278,39 @@ class AddAlarmViewModel(
     }
 
     private fun onVolumeUpdate(volume: Int) {
-        currentAlarm.update { it.copy(volume = Volume(volume)) }
+        _currentAlarm.update { it.copy(volume = Volume(volume)) }
     }
 
     private fun onVibrateUpdate(vibrate: Boolean) {
-        currentAlarm.update { it.copy(vibrationStatus = VibrationStatus(vibrate)) }
+        _currentAlarm.update { it.copy(vibrationStatus = VibrationStatus(vibrate)) }
     }
 
     private fun onAlarmNameUpdate(name: String) {
-        currentAlarm.update { it.copy(name = AlarmName(name)) }
+        _currentAlarm.update { it.copy(name = AlarmName(name)) }
     }
 
     private fun onRepeatItemClick(newItem: Alarm.AlarmDays) {
-        val alarmDays = currentAlarm.value.alarmDays.map { oldItem ->
+        val alarmDays = _currentAlarm.value.alarmDays.map { oldItem ->
             if (oldItem == newItem) oldItem.copy(isSelected = AlarmDaySelected(!oldItem.isSelected.value))
             else oldItem
         }
-        currentAlarm.update { it.copy(alarmDays = alarmDays) }
+        _currentAlarm.update {
+            it.copy(
+                alarmDays = alarmDays,
+                repeatDays = alarmDays.constructRepeatDays(_currentAlarm.value.localTime)
+            )
+        }
+
         val timeLeftForAlarm = calculateTimeBetweenWithText(
-            selectedDateTime = currentAlarm.value.localTime.toInstant(TimeZone.currentSystemDefault()),
+            selectedDateTime = _currentAlarm.value.localTime.toInstant(TimeZone.currentSystemDefault()),
             systemDateTime = Clock.System.now(),
-            alarmDays = currentAlarm.value.alarmDays
+            alarmDays = _currentAlarm.value.alarmDays
         )
-        currentAlarm.update { it.copy(timeLeftForAlarm = timeLeftForAlarm) }
-        println("format repeat day: $timeLeftForAlarm")
+        _currentAlarm.update { it.copy(timeLeftForAlarm = timeLeftForAlarm) }
     }
 
     private fun onPermissionDialogDismiss() {
-        permissionStatus.update { PermissionState.NOT_DETERMINED }
+        _permissionStatus.update { PermissionState.NOT_DETERMINED }
     }
 
     private fun onTimeSelectionUpdate(hour: Hour, minutes: Minute, timePeriod: TimePeriod) {
@@ -386,25 +350,22 @@ class AddAlarmViewModel(
         val timeLeftForAlarm = calculateTimeBetweenWithText(
             selectedDateTime = selectedLocalDateTimeInstant,
             systemDateTime = systemDateTimeInstant,
-            alarmDays = currentAlarm.value.alarmDays
+            alarmDays = _currentAlarm.value.alarmDays
         )
-        currentAlarm.update {
+        val timeValue = _currentAlarm.value.time.copy(
+            value = selectedLocalDateTime.formatLocalDateTimeToHHMM()
+        )
+        _currentAlarm.update {
             it.copy(
                 localTime = selectedLocalDateTime,
                 timePeriod = timePeriod,
                 timeLeftForAlarm = timeLeftForAlarm,
-            )
-        }
-
-        timeSelector.update {
-            it.copy(
-                selectedTime = AlarmTimeSelector.AlarmSelectedTime(hour = hour, minute = minutes)
+                time = timeValue,
             )
         }
     }
 
     companion object {
-        private const val PermissionsTag = "Permissions"
+        private const val PERMISSION_TAG = "Permissions"
     }
-
 }
