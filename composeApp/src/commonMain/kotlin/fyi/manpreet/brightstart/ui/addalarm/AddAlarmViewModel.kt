@@ -36,6 +36,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
@@ -67,6 +68,7 @@ class AddAlarmViewModel(
         _onAlarmAdded.update { false }
     }
 
+    // TODO Check update alarm. values are not set correctly
     fun updateCurrentAlarm(alarmId: Long?) {
         if (alarmId == null) return
         if (toUpdateAlarm != null) return
@@ -115,23 +117,36 @@ class AddAlarmViewModel(
         )
     }
 
-    private fun initCurrentAlarm() =
-        Alarm(
-            localTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
-            time = AlarmTime("03:45", Hour(3), Minute(45)), // TODO Default time
+    private fun initCurrentAlarm(): Alarm {
+        val hour = 3
+        val minute = 45
+        val time = "0$hour:$minute"
+        val localDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val localTime = LocalTime(hour = hour, minute = minute)
+        val localDateTime = LocalDateTime(localDate.date, localTime)
+        val alarmDays = initAlarmDays()
+
+        return Alarm(
+            localTime = localDateTime,
+            time = AlarmTime(time, Hour(hour), Minute(minute)), // TODO Default time
             name = AlarmName("Alarm"), // TODO Get text from strings or use default while adding alarm
             timePeriod = TimePeriod(TimePeriodValue.AM),
             ringtoneReference = RingtoneReference(""),
             ringtoneName = RingtoneName(""),
             volume = Volume(AlarmConstants.VOLUME), // TODO Should set default volume of phone
             vibrationStatus = VibrationStatus(AlarmConstants.VIBRATION_STATUS),  // TODO Should set default vibration status of phone
-            alarmDays = initAlarmDays(),
-            repeatDays = "",
+            alarmDays = alarmDays,
+            repeatDays = alarmDays.constructRepeatDays(localDateTime),
             isActive = AlarmActive(AlarmConstants.IS_ACTIVE),
-            timeLeftForAlarm = "",
+            timeLeftForAlarm = calculateTimeBetweenWithText(
+                selectedDateTime = localDateTime.toInstant(TimeZone.currentSystemDefault()),
+                systemDateTime = Clock.System.now(),
+                alarmDays = alarmDays,
+            ),
             icon = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
                 .getIconForTime()
         )
+    }
 
     // TODO Get text from strings
     private fun initAlarmDays() =
