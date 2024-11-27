@@ -1,7 +1,6 @@
 package fyi.manpreet.brightstart.data.mapper
 
 import androidx.compose.ui.graphics.vector.ImageVector
-import fyi.manpreet.brightstart.data.model.Alarm
 import fyi.manpreet.brightstart.data.model.Alarm.AlarmDays
 import fyi.manpreet.brightstart.data.model.DaysEnum
 import fyi.manpreet.brightstart.ui.home.items.icons.NightIcon
@@ -16,10 +15,10 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
-import kotlinx.datetime.format.FormatStringsInDatetimeFormats
 import kotlinx.datetime.plus
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Duration.Companion.days
 import kotlin.time.DurationUnit
 
 fun List<AlarmDays>.constructRepeatDays(currentTime: LocalDateTime): String {
@@ -138,17 +137,18 @@ private fun calculateTimeBetween(
     systemDateTime: Instant = Clock.System.now(),
     alarmDays: List<AlarmDays>
 ): String {
-    val selectedLocalDateTime =
-        selectedDateTime.toLocalDateTime(TimeZone.currentSystemDefault())
+    val selectedLocalDateTime = selectedDateTime.toLocalDateTime(TimeZone.currentSystemDefault())
     val selectedLocalDateTimeAlarmDays = alarmDays
         .filter { it.isSelected.value }
         .map { selectedLocalDateTime.calculateNextAlarmTime(it) }
 
     val firstSelectedLocalDateTimeAlarmDay: Instant? =
-        selectedLocalDateTimeAlarmDays.sorted().firstOrNull()
-            ?.toInstant(TimeZone.currentSystemDefault())
+        selectedLocalDateTimeAlarmDays.minOrNull()?.toInstant(TimeZone.currentSystemDefault())
 
-    val updatedSelectedDateTime = firstSelectedLocalDateTimeAlarmDay ?: selectedDateTime
+    val updatedSelectedDateTime = firstSelectedLocalDateTimeAlarmDay ?: run {
+        if (selectedDateTime < systemDateTime) selectedDateTime.plus(1.days)
+        else selectedDateTime
+    }
     val duration = updatedSelectedDateTime.minus(systemDateTime)
 
     val days = duration.toInt(DurationUnit.DAYS)
