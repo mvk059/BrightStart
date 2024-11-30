@@ -85,7 +85,7 @@ class AddAlarmViewModel(
 
     fun onEvent(event: AddAlarmEvent) {
         when (event) {
-            AddAlarmEvent.AddAlarm -> checkPermission()
+            AddAlarmEvent.AddAlarm -> { viewModelScope.launch { checkPermission() } }
             is AddAlarmEvent.SoundUpdate -> onSoundUpdate(event.data)
             is AddAlarmEvent.VolumeUpdate -> onVolumeUpdate(event.volume)
             is AddAlarmEvent.VibrateUpdate -> onVibrateUpdate(event.vibrationStatus)
@@ -206,7 +206,7 @@ class AddAlarmViewModel(
             )
         }
 
-    private fun checkPermission() {
+    private suspend fun checkPermission() {
         val permissionState = permissionService.checkPermission(Permission.NOTIFICATION)
         Logger.i(PERMISSION_TAG) { "Permission state: $permissionState" }
 
@@ -217,11 +217,9 @@ class AddAlarmViewModel(
         }
     }
 
-    private fun provideNotificationsPermission() {
-        viewModelScope.launch {
-            permissionService.providePermission(Permission.NOTIFICATION)
-            checkPermission()
-        }
+    private suspend fun provideNotificationsPermission() {
+        permissionService.providePermission(Permission.NOTIFICATION)
+        checkPermission()
     }
 
     private fun openSettingsPage(permission: Permission) {
