@@ -11,7 +11,7 @@ import org.koin.core.component.inject
 import org.koin.core.qualifier.named
 
 internal class PermissionServiceImpl: PermissionService, KoinComponent {
-    override fun checkPermission(permission: Permission): PermissionState = try {
+    override suspend fun checkPermission(permission: Permission): PermissionState = try {
         getPermissionDelegate(permission).getPermissionState()
     } catch (e: Exception) {
         e.printStackTrace()
