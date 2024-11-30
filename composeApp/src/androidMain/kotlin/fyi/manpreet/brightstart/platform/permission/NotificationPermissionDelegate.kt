@@ -11,7 +11,7 @@ class NotificationPermissionDelegate(
     private val mainActivityUseCase: MainActivityUseCase
 ) : PermissionDelegate {
 
-    override fun getPermissionState(): PermissionState =
+    override suspend fun getPermissionState(): PermissionState =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             checkPermissions(
                 context,
@@ -22,7 +22,7 @@ class NotificationPermissionDelegate(
             PermissionState.GRANTED
         }
 
-    override fun providePermission() {
+    override suspend fun providePermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             mainActivityUseCase.requireActivity().providePermissions(postNotificationPermissions) {
                 throw IllegalStateException("Cannot provide permission: ${Permission.NOTIFICATION.name}")
